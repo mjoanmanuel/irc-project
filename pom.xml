@@ -18,6 +18,7 @@
 		<module>irc-server</module>
 		<module>irc-client</module>
 		<module>thegame</module>
+		<module>irc-gui</module>
 	</modules>
 
 	<build>
