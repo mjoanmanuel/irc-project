@@ -1,4 +1,4 @@
-package com.project.irc;
+package com.project.irc_client;
 
 /**
  * Hello world!
