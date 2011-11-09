@@ -1,4 +1,4 @@
-package com.project.irc_server;
+package com.project.ircserver;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
