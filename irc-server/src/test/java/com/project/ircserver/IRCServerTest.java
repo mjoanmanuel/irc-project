@@ -1,5 +1,7 @@
 package com.project.ircserver;
 
+import static com.project.ircserver.IRCServer.DEFAULT_IRC_PORT;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -17,15 +19,13 @@ import org.junit.Test;
  */
 public class IRCServerTest {
 
-    private static final int PORT = 8080;
-    private static final String SERVER_NAME = "localhost";
-    private static final String HOST = "irc.localhost.com";
+    private static final String HOST = "irc.myirchost.com";
     private IRCServer server;
 
     @Before
     public void setUp() {
 	try {
-	    server = new IRCServer(SERVER_NAME, HOST, PORT);
+	    server = new IRCServer(HOST);
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
@@ -46,7 +46,8 @@ public class IRCServerTest {
     public void testAcceptMockupClient() {
 	Socket mockClient = null;
 	try {
-	    mockClient = server.accept();
+	    mockClient = new Socket(server.getHost(), DEFAULT_IRC_PORT);
+	    mockClient.connect(server.getLocalSocketAddress());
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}

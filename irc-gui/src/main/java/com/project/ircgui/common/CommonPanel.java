@@ -1,5 +1,8 @@
 package com.project.ircgui.common;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 
 /**
@@ -7,15 +10,27 @@ import javax.swing.JPanel;
  * 
  * @author mjoanmanuel@gmail.com
  */
-public class CommonPanel extends JPanel {
+public abstract class CommonPanel extends JPanel {
+
+    /**
+     * Action is responsible of
+     * 
+     * @author mjoanmanuel@gmail.com
+     */
+    public class Action extends AbstractAction {
+
+	private static final long serialVersionUID = 1L;
+
+	public void actionPerformed(ActionEvent e) {
+	    onClick();
+	}
+
+    }
 
     private static final long serialVersionUID = 1L;
 
-    public CommonPanel() {
-	init();
-    }
+    protected abstract void init();
 
-    protected void init() {
-    }
+    protected abstract void onClick();
 
 }

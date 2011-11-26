@@ -1,18 +1,12 @@
 package com.project.ircgui;
 
-import java.awt.GridLayout;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.project.ircgui.panel.miscellaneous.MiscellaneousPanel;
 import com.project.ircgui.panel.server.ServerPanel;
-import com.project.ircgui.panel.userinfo.UserInfoPanel;
+import com.project.ircgui.panel.user.UserPanel;
+import com.project.ircgui.utils.I18nUtils;
 
 /**
  * IRCFrame is responsible of
@@ -21,67 +15,30 @@ import com.project.ircgui.panel.userinfo.UserInfoPanel;
  */
 public class IRCFrame extends JFrame {
 
-    private static final String DEFAULT_I18N_FILE = "com.project.ircgui.IRCFrame";
-    private static final String DEFAULT_COUNTRY = "ES";
-    private static final String DEFAULT_LANGUAGE = "es";
+    private static final String I18N_FILE = "com.project.ircgui.IRCFrame";
     private static final long serialVersionUID = 1L;
-
-    /** Class to use i18n */
-    private ResourceBundle i18n;
+    private I18nUtils i18n = new I18nUtils();
 
     public IRCFrame() {
 	init();
+	i18n.setI18n(I18N_FILE);
 	add(ircConfigurationTabs());
-    }
-
-    /**
-     * @param i18nFile
-     *            must be a valid resource file.
-     * @param locale
-     *            current locale
-     * @param language
-     *            must be es or en or so..
-     * @return
-     */
-    public ResourceBundle setI18n(final String i18nFile, final String language,
-	    final String country) {
-	Locale locale = Locale.getDefault();
-
-	if (language != null && country != null) {
-	    locale = new Locale(DEFAULT_LANGUAGE, DEFAULT_COUNTRY);
-	}
-
-	i18n = ResourceBundle.getBundle(i18nFile, locale);
-	if (i18nFile != null && i18n != null) {
-	    return i18n;
-	}
-	return null;
     }
 
     private JTabbedPane ircConfigurationTabs() {
 	JTabbedPane tabs = new JTabbedPane();
 
 	tabs.addTab(i18n.getString("server"), new ServerPanel());
-	tabs.addTab(i18n.getString("userInfo"), new UserInfoPanel());
+	tabs.addTab(i18n.getString("userInfo"), new UserPanel());
 	tabs.addTab(i18n.getString("miscellaneous"), new MiscellaneousPanel());
 
 	return tabs;
-    }
-
-    private JComponent makePanel(final String text) {
-	JPanel panel = new JPanel(false);
-	JLabel filler = new JLabel(text);
-	filler.setHorizontalAlignment(JLabel.CENTER);
-	panel.setLayout(new GridLayout(1, 1));
-	panel.add(filler);
-	return panel;
     }
 
     protected void init() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setSize(400, 400);
 	setVisible(true);
-	setI18n(DEFAULT_I18N_FILE, null, null);
     }
 
 }
