@@ -1,6 +1,5 @@
 package com.project.ircgui.factory;
 
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
@@ -8,6 +7,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 
 /**
@@ -17,41 +19,73 @@ import javax.swing.JTextField;
  */
 public final class ComponentFactory {
 
-    public static JLabel createLabel(final String text) {
-	return new JLabel(text);
-    }
+	/**
+	 * 
+	 */
+	private static final int DEFAULT_TXTFIELD_WIDTH = 100;
+	/**
+	 * 
+	 */
+	private static final int DEFAULT_TXTFIELD_HEIGHT = 25;
 
-    public static JComboBox createComboBox(final Object... items) {
-	return new JComboBox(items);
-    }
-
-    public static JTextField createTextField() {
-	final JTextField textField = new JTextField();
-	return textField;
-    }
-
-    public static JTextField createTextField(final Dimension size) {
-	final JTextField textField = new JTextField();
-	textField.setSize(size);
-	return textField;
-    }
-
-    public static JButton createButton(final String text,
-	    final AbstractAction action) {
-	final JButton button = new JButton(text);
-	if (action != null) {
-	    button.addActionListener(action);
+	public static JLabel createLabel(final String text) {
+		return new JLabel(text);
 	}
-	return button;
-    }
 
-    public static JCheckBox createCheckBox(final String text,
-	    final ActionListener action) {
-	final JCheckBox checkBox = new JCheckBox(text);
-	if (action != null) {
-	    checkBox.addActionListener(action);
+	public static JMenuBar createMenuBar() {
+		final JMenuBar menuBar = new JMenuBar();
+		menuBar.setVisible(true);
+		menuBar.setSize(100, 100);
+		return menuBar;
 	}
-	return checkBox;
-    }
+
+	public static JMenu createMenu(final String menuTitle,
+			final JMenuItem... menuItems) {
+		final JMenu menu = new JMenu(menuTitle);
+		for (final JMenuItem menuItem : menuItems) {
+			menu.add(menuItem);
+		}
+		return menu;
+	}
+
+	public static JMenuItem createMenuItem(final String menuItemTitle,
+			final ActionListener action) {
+		final JMenuItem item = new JMenuItem();
+		item.setText(menuItemTitle);
+		if (action != null) {
+			item.addActionListener(action);
+		}
+		return item;
+	}
+
+	public static JComboBox createComboBox(final Object... items) {
+		final JComboBox comboBox = new JComboBox(items);
+		comboBox.setEditable(true);
+		return comboBox;
+	}
+
+	public static JTextField createTextField() {
+		final JTextField textField = new JTextField();
+		textField.setSize(DEFAULT_TXTFIELD_WIDTH, DEFAULT_TXTFIELD_HEIGHT);
+		return textField;
+	}
+
+	public static JButton createButton(final String text,
+			final AbstractAction action) {
+		final JButton button = new JButton(text);
+		if (action != null) {
+			button.addActionListener(action);
+		}
+		return button;
+	}
+
+	public static JCheckBox createCheckBox(final String text,
+			final ActionListener action) {
+		final JCheckBox checkBox = new JCheckBox(text);
+		if (action != null) {
+			checkBox.addActionListener(action);
+		}
+		return checkBox;
+	}
 
 }

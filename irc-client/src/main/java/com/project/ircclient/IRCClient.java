@@ -1,15 +1,13 @@
 package com.project.ircclient;
 
-import java.io.Serializable;
+import java.net.Socket;
 
 /**
  * IRCClient is responsible of
  * 
  * @author mjoanmanuel@gmail.com
  */
-public class IRCClient implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class IRCClient extends Socket {
 
     public IRCClient() {
     }

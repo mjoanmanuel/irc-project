@@ -12,25 +12,25 @@ import javax.swing.JPanel;
  */
 public abstract class CommonPanel extends JPanel {
 
-    /**
-     * Action is responsible of
-     * 
-     * @author mjoanmanuel@gmail.com
-     */
-    public class Action extends AbstractAction {
+	/**
+	 * Action is responsible of
+	 * 
+	 * @author mjoanmanuel@gmail.com
+	 */
+	public class Action extends AbstractAction {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			onClick();
+		}
+
+	}
 
 	private static final long serialVersionUID = 1L;
 
-	public void actionPerformed(ActionEvent e) {
-	    onClick();
-	}
+	protected abstract void init();
 
-    }
-
-    private static final long serialVersionUID = 1L;
-
-    protected abstract void init();
-
-    protected abstract void onClick();
+	protected abstract void onClick();
 
 }
