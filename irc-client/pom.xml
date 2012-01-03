@@ -20,5 +20,11 @@
 	</properties>
 
 	<!-- DEPENDENCIES GOES HERE -->
-
+	<dependencies>
+		<dependency>
+			<groupId>com.project</groupId>
+			<artifactId>irc-server</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+	</dependencies>
 </project>
