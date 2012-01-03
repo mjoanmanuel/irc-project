@@ -12,6 +12,7 @@
 
 	<properties>
 		<junit.version>4.8.2</junit.version>
+		<irc.version>0.0.1</irc.version>
 	</properties>
 
 	<modules>
@@ -43,6 +44,15 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.project</groupId>
+			<artifactId>irc-server</artifactId>
+			<version>${irc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.project</groupId>
+			<artifactId>irc-client</artifactId>
+			<version>${irc.version}</version>
+		</dependency>
 	</dependencies>
-
 </project>

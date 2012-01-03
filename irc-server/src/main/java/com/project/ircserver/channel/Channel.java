@@ -1,11 +1,12 @@
 package com.project.ircserver.channel;
 
-import static java.lang.String.format;
-
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.project.ircclient.Client;
 
@@ -61,44 +62,54 @@ public class Channel implements Serializable {
     private String channelName;
     // This property holds a channel with registered clients.
     private Map<String, HashMap<String, Client>> channel = new HashMap<String, HashMap<String, Client>>();
-    private PrintStream writeToClient;
 
-    public Channel(final String channelName, final PrintStream writeToClient) {
+    public Channel(final String channelName) {
 	this.channelName = channelName;
-	this.writeToClient = writeToClient;
+    }
+
+    // Add client to the channel and send a JOIN MSG to all other clients.
+    public void addClient(final String nickname, final Client client) {
+	final HashMap<String, Client> clients = channel.get(channelName);
+	clients.put(nickname, client);
 	sendJoinMsg();
     }
 
-    public Channel setChannel(final String channelName) {
+    public Channel setChannelName(final String channelName) {
 	this.channelName = channelName;
 	return this;
     }
 
-    public String getChannel() {
+    public String getChannelName() {
 	return channelName;
     }
 
-    public Channel setIrcClient(final PrintStream writeToClient) {
-	this.writeToClient = writeToClient;
-	return this;
-    }
-
-    public PrintStream getIrcClient() {
-	return writeToClient;
-    }
-
-    public void sendMsg(final String msg) {
-	writeToClient.println(msg);
+    // TODO
+    public void sendMsg(final Client client) {
+	PrintWriter writer = null;
+	try {
+	    writer = new PrintWriter(client.getOutputStream());
+	    writer.println(String.format("JOIN # '%s' ", channelName));
+	} catch (final IOException ex) {
+	    ex.printStackTrace();
+	} finally {
+	    writer.close();
+	}
     }
 
     /** @return a Map containing all the clients in the specify channel. */
-    public HashMap<String, Client> getRegisteredClients(final String channelName) {
+    public HashMap<String, Client> getClients() {
 	return channel.get(channelName);
     }
 
     private void sendJoinMsg() {
-	// send join msg to connected client.
-	writeToClient.println(format("JOIN # '%s' ", channelName));
+	// send join msg to all clients.
+	final Iterator<Entry<String, Client>> iterator = getClients()
+		.entrySet().iterator();
+	while (iterator.hasNext()) {
+	    final Entry<String, Client> current = iterator.next();
+	    final Client client = current.getValue();
+	    sendMsg(client);
+	}
     }
 
 }

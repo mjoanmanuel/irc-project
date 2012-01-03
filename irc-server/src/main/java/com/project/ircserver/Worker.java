@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import com.project.ircclient.Client;
+import com.project.ircserver.channel.Channel;
 import com.project.ircserver.protocol.Protocol;
 
 /**
@@ -16,10 +17,13 @@ import com.project.ircserver.protocol.Protocol;
 public class Worker extends Thread {
 
     private Client client;
+    private Channel channel;
     private Protocol protocol;
 
-    public Worker(final Client client, final Protocol protocol) {
+    public Worker(final Client client, final Channel channel,
+	    final Protocol protocol) {
 	this.client = client;
+	this.channel = channel;
 	this.protocol = protocol;
     }
 
@@ -35,7 +39,7 @@ public class Worker extends Thread {
 		    client.getInputStream()));
 	    String receiveMessageString = "";
 	    while ((receiveMessageString = receiver.readLine()) != null) {
-		protocol.handleMessage(receiveMessageString);
+		protocol.handleMessageTyped(channel, receiveMessageString);
 	    }
 	} catch (final IOException ex) {
 	    ex.printStackTrace();

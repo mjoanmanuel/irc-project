@@ -20,8 +20,9 @@ public class Protocol {
      */
     private static final String NICKNAME_REGEX = "[a-z0-9A-Z0-9]{1,9}";
 
+    // TODO
     /** Must match the patter #|& channelName1298734 without space */
-    private static final String CHANNELNAME_REGEX = "^#|&[a-zA-z]\\S{1,200}";
+    private static final String CHANNELNAME_REGEX = "#|&{1}[a-zA-z]{1,200}";
 
     /**
      * Holds the clients in the server making them unique.
@@ -61,13 +62,18 @@ public class Protocol {
 	return clients.get(nickname);
     }
 
+    public Channel findChannelByName(final String channelName) {
+	return channels.get(channelName);
+    }
+
     /** Puts a new client into the clients Map. */
     public void registerClient(final String nickname, final Client client) {
 	clients.put(nickname, client);
     }
 
-    public void registerChannel(final String channelName, final Channel channel) {
-	channels.put(channelName, channel);
+    public Channel registerChannel(final String channelName,
+	    final Channel channel) {
+	return channels.put(channelName, channel);
     }
 
     /** Updates the clients Map. */
@@ -84,8 +90,9 @@ public class Protocol {
 	return channels.containsKey(channel);
     }
 
-    public void handleMessage(final String message) {
+    public void handleMessageTyped(final Channel channel, final String message) {
 	// TODO
+
     }
 
 }

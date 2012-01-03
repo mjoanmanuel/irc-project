@@ -16,9 +16,6 @@
 	<packaging>jar</packaging>
 	<name>irc-client</name>
 
-	<properties>
-	</properties>
-
 	<!-- DEPENDENCIES GOES HERE -->
 	<dependencies>
 		<dependency>

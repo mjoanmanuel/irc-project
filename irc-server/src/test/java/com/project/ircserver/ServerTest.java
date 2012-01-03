@@ -37,8 +37,8 @@ public class ServerTest {
     @Test
     public void testAcceptConnections() {
 	final String fakeNickname = "test";
-	final String 
-	server.connect(fakeNickname);
+	final String fakeChannel = "derps";
+	server.connect(fakeChannel, fakeNickname);
     }
 
     private boolean closeServerConnection() {

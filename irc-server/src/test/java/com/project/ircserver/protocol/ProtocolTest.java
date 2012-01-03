@@ -35,6 +35,7 @@ public class ProtocolTest {
 	Assert.assertFalse(protocol.validateNickname(emptyNickname));
     }
 
+    // TODO
     @Test
     public void testValidateChannelname() {
 	final String wrongChannelName = "derpsChannel";

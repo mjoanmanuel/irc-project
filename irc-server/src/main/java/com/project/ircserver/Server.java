@@ -25,7 +25,6 @@ public class Server extends ServerSocket {
     /** All servers must have the following information about all clients. */
     private final Protocol protocol = new Protocol();
     private int port;
-    private Channel channel;
 
     public Server(final int port) throws IOException {
 	super(port);
@@ -35,12 +34,13 @@ public class Server extends ServerSocket {
     /** Connect and register this nickname to the server. */
     public boolean connect(final String channelName, final String nickname) {
 	while (listening) {
-	    if (protocol.isChannelRegistered(channelName)) {
-		// If the channel doesn't exist, is created implicitly.
-		protocol.registerChannel(channelName, null);
+	    if (!protocol.isChannelRegistered(channelName)) {
+		// If the channel doesn't exist, is created implicitly with the
+		// client as operator by default.
+		connectNewClient(channelName, "@".concat(nickname), true);
 	    }
 	    if (protocol.isNickNameRegistered(nickname)) {
-		connectNewClient(nickname);
+		connectNewClient(channelName, nickname, false);
 		return true;
 	    }
 
@@ -53,19 +53,46 @@ public class Server extends ServerSocket {
 	return protocol.findClientByNickname(nickname);
     }
 
-    private void connectNewClient(final String nickname) {
+    private void connectNewClient(final String channelName,
+	    final String nickname, final boolean isNewChannel) {
 	Client client;
 	try {
 	    // This is part of RFC 1.2
-	    client = (Client) this.accept(); // we get the socket.
-	    client.setNickname(nickname); // set the nickname.
-	    client.setServer(this); // set the server where the client is
-				    // connected.
-	    protocol.registerClient(nickname, client);
+	    client = (Client) this.accept();
+	    // set the nickname.
+	    client.setNickname(nickname);
+	    // set the server where the client is connected, just RFC
+	    // specification.
+	    client.setServer(this);
 
-	    new Worker(client, protocol).start();
+	    Channel channel = null;
+	    if (isNewChannel) {
+		channel = createChannel(channelName, nickname, client);
+	    } else {
+		channel = addToChannel(channelName, nickname, client);
+	    }
+
+	    protocol.registerClient(nickname, client);
+	    new Worker(client, channel, protocol).start();
+
 	} catch (IOException e) {
-	    out.println(" Couldn't connect to port " + port + " try other one.");
+	    out.println(" Couldn't connect to port " + port
+		    + " try another one.");
 	}
+    }
+
+    private Channel addToChannel(final String channelName,
+	    final String nickname, Client client) {
+	final Channel channel = protocol.findChannelByName(channelName);
+	channel.addClient(nickname, client);
+	return channel;
+    }
+
+    private Channel createChannel(final String channelName,
+	    final String nickname, Client client) {
+	final Channel channel = protocol.registerChannel(channelName,
+		new Channel(channelName));
+	channel.addClient(nickname, client);
+	return channel;
     }
 }

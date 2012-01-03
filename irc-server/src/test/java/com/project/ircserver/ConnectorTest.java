@@ -40,6 +40,6 @@ public class ConnectorTest {
 
     public void testConnectToHostAvaibleChannel() {
 	final Channel channel = mockConnector.getChannel(" devs ");
-	channel.sendMsg(" hi kindleit (: !");
+	// channel.sendMsg(" hi kindleit (: !");
     }
 }

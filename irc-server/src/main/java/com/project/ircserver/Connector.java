@@ -46,7 +46,7 @@ public class Connector implements Serializable {
     }
 
     public Channel getChannel(final String channelName) {
-	return new Channel(channelName, writeTo);
+	return new Channel(channelName);
     }
 
     public int getPort() {
