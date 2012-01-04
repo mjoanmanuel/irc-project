@@ -9,17 +9,17 @@ import com.project.ircserver.Server;
  * 
  * @author mjoanmanuel@gmail.com
  */
-public class Client extends Socket {
+public class Client {
 
     private static final String OPERATOR_IDENTIFIER = "@";
+
     private String nickname; // holds the nickname for the client.
     private Server server; // client connected to the irc server.
     // Operator can do whatever he/she wants. TODO : see if we can implement
     // this.
+    private String channelname;
+    private Socket socket;
     private boolean isOperator;
-
-    public Client() {
-    }
 
     public Client setNickname(final String nickname) {
 	this.nickname = nickname;
@@ -34,7 +34,7 @@ public class Client extends Socket {
     }
 
     public String getRealHost() {
-	return getInetAddress().getHostName();
+	return socket.getInetAddress().getHostName();
     }
 
     public Client setServer(final Server server) {
@@ -52,6 +52,24 @@ public class Client extends Socket {
 
     private boolean hasOperatorIdentifier(final String nickname) {
 	return nickname.contains(OPERATOR_IDENTIFIER);
+    }
+
+    public Client setChannelName(final String channelname) {
+	this.channelname = channelname;
+	return this;
+    }
+
+    public String getChannelName() {
+	return channelname;
+    }
+
+    public Client setSocket(final Socket socket) {
+	this.socket = socket;
+	return this;
+    }
+
+    public Socket getSocket() {
+	return socket;
     }
 
 }

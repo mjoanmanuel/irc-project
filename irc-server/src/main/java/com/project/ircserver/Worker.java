@@ -1,5 +1,8 @@
 package com.project.ircserver;
 
+import static java.lang.String.format;
+import static java.lang.System.out;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,23 +31,29 @@ public class Worker extends Thread {
     }
 
     @Override
-    public synchronized void start() {
-	super.start();
+    public synchronized void run() {
+	super.run();
 	PrintWriter sender = null;
 	BufferedReader receiver = null;
 
 	try {
-	    sender = new PrintWriter(client.getOutputStream());
-	    receiver = new BufferedReader(new InputStreamReader(
-		    client.getInputStream()));
+	    sender = new PrintWriter(client.getSocket().getOutputStream());
+	    receiver = new BufferedReader(new InputStreamReader(client
+		    .getSocket().getInputStream()));
 	    String receiveMessageString = "";
 	    while ((receiveMessageString = receiver.readLine()) != null) {
-		protocol.handleMessageTyped(channel, receiveMessageString);
+		final String response = protocol.handleInput(channel, client,
+			receiveMessageString);
+		out.println(format(" channel: %s, nickname: %s, message: %s",
+			channel.getChannelName(), client.getNickname(),
+			response));
+
+		sender.write(response);
 	    }
 	} catch (final IOException ex) {
 	    ex.printStackTrace();
 	} finally {
-	    if (isOutPutOpen(sender) && isInputOpen(receiver)) {
+	    if (isOutputOpen(sender) && isInputOpen(receiver)) {
 		closeOutputResource(sender);
 		closeInputResource(receiver);
 	    }
@@ -62,7 +71,7 @@ public class Worker extends Thread {
 	}
     }
 
-    private boolean isOutPutOpen(final PrintWriter sendMessage) {
+    private boolean isOutputOpen(final PrintWriter sendMessage) {
 	return sendMessage != null;
     }
 

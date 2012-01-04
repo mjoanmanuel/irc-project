@@ -1,9 +1,14 @@
 package com.project.ircserver.protocol;
 
+import static com.project.ircserver.utils.ProtocolUtils.EMPTY;
+import static com.project.ircserver.utils.ProtocolUtils.extract;
+import static com.project.ircserver.utils.ProtocolUtils.proccesInput;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.project.ircclient.Client;
+import com.project.ircserver.Command;
 import com.project.ircserver.channel.Channel;
 
 /**
@@ -12,6 +17,12 @@ import com.project.ircserver.channel.Channel;
  * @author mjoanmanuel@gmail.com
  */
 public class Protocol {
+
+    /** Client input message. */
+    private static final int MESSAGE = 1;
+
+    /** Holds the IRC command {@link Command}. */
+    private static final int PREFIX = 0;
 
     /**
      * Represents an regular expression for validating nicknames from a-z | A-Z
@@ -22,7 +33,7 @@ public class Protocol {
 
     // TODO
     /** Must match the patter #|& channelName1298734 without space */
-    private static final String CHANNELNAME_REGEX = "#|&{1}[a-zA-z]{1,200}";
+    private static final String CHANNELNAME_REGEX = "((#|&{1})[a-z0-9A-Z0-9]{1,200})";
 
     /**
      * Holds the clients in the server making them unique.
@@ -62,7 +73,7 @@ public class Protocol {
 	return clients.get(nickname);
     }
 
-    public Channel findChannelByName(final String channelName) {
+    public Channel findChannel(final String channelName) {
 	return channels.get(channelName);
     }
 
@@ -71,9 +82,9 @@ public class Protocol {
 	clients.put(nickname, client);
     }
 
-    public Channel registerChannel(final String channelName,
-	    final Channel channel) {
-	return channels.put(channelName, channel);
+    public Channel createChannel(final Channel channel) {
+	channels.put(channel.getChannelName(), channel);
+	return channel;
     }
 
     /** Updates the clients Map. */
@@ -86,13 +97,22 @@ public class Protocol {
 	return clients.containsKey(nickname);
     }
 
-    public boolean isChannelRegistered(final String channel) {
-	return channels.containsKey(channel);
+    public boolean isChannelRegistered(final String channelname) {
+	return channels.containsKey(channelname);
     }
 
-    public void handleMessageTyped(final Channel channel, final String message) {
-	// TODO
+    public String handleInput(final Channel channel, final Client client,
+	    final String input) {
+	// Empty messages are ignored implitly.
+	if (!EMPTY.equals(input)) {
+	    final String[] extracted = extract(input);
+	    final String prefix = extracted[PREFIX];
+	    final String message = extracted[MESSAGE];
 
+	    return proccesInput(channel, client, prefix, message);
+	}
+
+	return EMPTY;
     }
 
 }

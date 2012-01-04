@@ -36,9 +36,10 @@ public class ServerTest {
 
     @Test
     public void testAcceptConnections() {
-	final String fakeNickname = "test";
-	final String fakeChannel = "derps";
-	server.connect(fakeChannel, fakeNickname);
+	server.start();
+
+	// maybe wont reach this line..
+	Assert.assertTrue(closeServerConnection());
     }
 
     private boolean closeServerConnection() {

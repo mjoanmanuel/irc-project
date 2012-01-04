@@ -3,10 +3,15 @@
  */
 package com.project.ircserver;
 
+import static com.project.ircserver.utils.ProtocolUtils.CHANNEL_NAME;
+import static com.project.ircserver.utils.ProtocolUtils.NICKNAME;
+import static com.project.ircserver.utils.ProtocolUtils.createClient;
+import static com.project.ircserver.utils.ProtocolUtils.readCfgMessage;
 import static java.lang.System.out;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.project.ircclient.Client;
 import com.project.ircserver.channel.Channel;
@@ -19,9 +24,10 @@ import com.project.ircserver.protocol.Protocol;
  */
 public class Server extends ServerSocket {
 
-    /** Max client allowed per channel. */
-    public static final int MAX_CLIENTS_ALLOWED = 30;
-    private final boolean listening = true;
+    /** Default IRC port defined by RFC document. */
+    public static final int DEFAULT_IRC_PORT = 6667;
+
+    private final boolean ALWAYS_LISTENING = true;
     /** All servers must have the following information about all clients. */
     private final Protocol protocol = new Protocol();
     private int port;
@@ -31,68 +37,58 @@ public class Server extends ServerSocket {
 	this.port = port;
     }
 
-    /** Connect and register this nickname to the server. */
-    public boolean connect(final String channelName, final String nickname) {
-	while (listening) {
-	    if (!protocol.isChannelRegistered(channelName)) {
-		// If the channel doesn't exist, is created implicitly with the
-		// client as operator by default.
-		connectNewClient(channelName, "@".concat(nickname), true);
-	    }
-	    if (protocol.isNickNameRegistered(nickname)) {
-		connectNewClient(channelName, nickname, false);
-		return true;
-	    }
-
-	    // TODO : reconnect with other nickname.
-	    return false;
+    /** Start the server. */
+    public void start() {
+	while (ALWAYS_LISTENING) {
+	    listening();
 	}
     }
 
-    public Client findClientByNickname(final String nickname) {
-	return protocol.findClientByNickname(nickname);
-    }
-
-    private void connectNewClient(final String channelName,
-	    final String nickname, final boolean isNewChannel) {
-	Client client;
+    private void listening() {
+	Socket socket;
 	try {
 	    // This is part of RFC 1.2
-	    client = (Client) this.accept();
-	    // set the nickname.
-	    client.setNickname(nickname);
+	    socket = this.accept();
 	    // set the server where the client is connected, just RFC
 	    // specification.
-	    client.setServer(this);
-
-	    Channel channel = null;
-	    if (isNewChannel) {
-		channel = createChannel(channelName, nickname, client);
-	    } else {
-		channel = addToChannel(channelName, nickname, client);
+	    if (!connectClient(socket)) {
+		// TODO send an error msg to the socket why couldn't connect.
 	    }
 
-	    protocol.registerClient(nickname, client);
-	    new Worker(client, channel, protocol).start();
-
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    out.println(" Couldn't connect to port " + port
 		    + " try another one.");
 	}
     }
 
-    private Channel addToChannel(final String channelName,
-	    final String nickname, Client client) {
-	final Channel channel = protocol.findChannelByName(channelName);
-	channel.addClient(nickname, client);
-	return channel;
+    private boolean connectClient(final Socket socket) {
+	final String[] cfg = readCfgMessage(socket);
+	final String channelname = cfg[CHANNEL_NAME];
+	String nickname = cfg[NICKNAME];
+	Channel channel = protocol.findChannel(channelname);
+
+	if (!protocol.isChannelRegistered(channelname)) {
+	    // If the channel doesn't exist, is created implicitly with the
+	    // client as operator by default.
+	    if (!protocol.validateChannelName(channelname)) {
+		return false;
+	    }
+	    channel = protocol.createChannel(new Channel(channelname));
+
+	    if (!protocol.validateNickname(nickname)) {
+		return false;
+	    }
+
+	    nickname = "@".concat(nickname);
+	}
+
+	final Client client = createClient(this, channel, nickname, socket);
+
+	protocol.registerClient(nickname, client);
+	channel.addClient(client);
+	new Worker(client, channel, protocol).start();
+
+	return true;
     }
 
-    private Channel createChannel(final String channelName,
-	    final String nickname, Client client) {
-	final Channel channel = protocol.registerChannel(channelName,
-		new Channel(channelName));
-	channel.addClient(nickname, client);
-	return channel;
-    }
 }
