@@ -8,29 +8,66 @@ package com.project.ircserver;
 public enum Command {
 
     /** Bann a client from the channel. */
-    KICK("/KICK"),
+    KICK {
+	@Override
+	public String toString() {
+	    return "/KICK";
+	}
+    },
     /** Change the channel mode. */
-    MODE("/MODE"),
+    MODE {
+	public String toString() {
+	    return "/MODE";
+	}
+    },
     /** Invite a client to an invite channel (see mode +i notation). */
-    INVITE("/INVITE"),
+    INVITE {
+	@Override
+	public String toString() {
+	    return "/INVITE";
+	}
+    },
     /** Change the channel topic with a mode +t. */
-    TOPIC("/TOPIC"),
+    TOPIC {
+	@Override
+	public String toString() {
+	    return "/TOPIC";
+	}
+    },
     /** Join to other channel. */
-    JOIN("/JOIN"),
+    JOIN {
+	@Override
+	public String toString() {
+	    return "/JOIN";
+	}
+    },
     /** poke your name. */
-    ME("/ME"),
+    ME {
+	@Override
+	public String toString() {
+	    return "/ME";
+	}
+    },
     /** Leave the channel. */
-    LEAVE("/LEAVE"),
+    LEAVE {
+	@Override
+	public String toString() {
+	    return "/LEAVE";
+	}
+    },
     /** Send a private message. */
-    MSG("/MSG");
+    MSG {
+	@Override
+	public String toString() {
+	    return "/MSG";
+	}
+    },
 
-    private String text;
-
-    Command(final String text) {
-	this.text = text;
-    }
-
-    public String getText() {
-	return text;
-    }
+    /** A unknow command. */
+    NONCOMMAND {
+	@Override
+	public String toString() {
+	    return "NONCOMMAND";
+	}
+    };
 }

@@ -3,8 +3,6 @@
  */
 package com.project.ircserver;
 
-import static com.project.ircserver.utils.ProtocolUtils.CHANNEL_NAME;
-import static com.project.ircserver.utils.ProtocolUtils.NICKNAME;
 import static com.project.ircserver.utils.ProtocolUtils.createClient;
 import static com.project.ircserver.utils.ProtocolUtils.readCfgMessage;
 import static java.lang.System.out;
@@ -23,6 +21,10 @@ import com.project.ircserver.protocol.Protocol;
  * @author jmendoza Dec 1, 2011
  */
 public class Server extends ServerSocket {
+
+    private static final int CHANNEL_NAME = 1;
+
+    private static final int NICKNAME = 0;
 
     /** Default IRC port defined by RFC document. */
     public static final int DEFAULT_IRC_PORT = 6667;
