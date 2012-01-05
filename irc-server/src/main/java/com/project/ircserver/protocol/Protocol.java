@@ -1,7 +1,10 @@
 package com.project.ircserver.protocol;
 
+import static com.project.ircserver.Command.NONCOMMAND;
+import static com.project.ircserver.Command.valueOf;
 import static com.project.ircserver.utils.ProtocolUtils.EMPTY;
 import static com.project.ircserver.utils.ProtocolUtils.extract;
+import static com.project.ircserver.utils.ProtocolUtils.isValidCommand;
 import static com.project.ircserver.utils.ProtocolUtils.proccesInput;
 
 import java.util.HashMap;
@@ -18,11 +21,11 @@ import com.project.ircserver.channel.Channel;
  */
 public class Protocol {
 
-    /** Nickname input. */
-    public static final int NICKNAME = 2;
-
     /** Client input message. */
-    public static final int MESSAGE = 1;
+    public static final int MESSAGE = 2;
+
+    /** Migth be nickname or channel. */
+    public static final int OPTION = 1;
 
     /** Holds the IRC command {@link Command}. */
     public static final int PREFIX = 0;
@@ -109,14 +112,16 @@ public class Protocol {
 	// Empty messages are ignored implitly.
 	if (!EMPTY.equals(input)) {
 	    final String[] extracted = extract(input);
-	    final String prefix = extracted[PREFIX];
+	    final String tmp = extracted[PREFIX];
+	    final int length = tmp.length();
+	    final Command prefix = isValidCommand(tmp) ? valueOf(tmp.substring(
+		    1, length)) : NONCOMMAND;
 	    final String message = extracted[MESSAGE];
-	    final String nickname = extracted[NICKNAME];
+	    final String option = extracted[OPTION];
 
-	    return proccesInput(channel, client, prefix, message);
+	    return proccesInput(channel, client, prefix, option, message);
 	}
 
 	return EMPTY;
     }
-
 }

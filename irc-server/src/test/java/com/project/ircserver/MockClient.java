@@ -36,10 +36,13 @@ public class MockClient {
 
 	    reader = new BufferedReader(new InputStreamReader(
 		    mockClient.getInputStream()));
+
 	    String read = "";
+	    // System.out.println(" mock chat: -> " + read);
+	    // sender.println("");
 
 	    while ((read = reader.readLine()) != null) {
-		System.out.println(" mock chat: -> " + read);
+		System.out.println(" -> " + read);
 		final String userInput = response();
 		System.out.println(userInput);
 		sender.println(userInput);
