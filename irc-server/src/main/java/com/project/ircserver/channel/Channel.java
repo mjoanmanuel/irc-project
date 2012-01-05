@@ -1,6 +1,8 @@
 package com.project.ircserver.channel;
 
+import static com.project.ircserver.ChannelMode.PUBLIC;
 import static com.project.ircserver.utils.ProtocolUtils.sendGlobalMessage;
+import static com.project.ircserver.utils.ProtocolUtils.sendPrivateMessage;
 import static java.lang.String.format;
 
 import java.io.Serializable;
@@ -8,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.project.ircclient.Client;
+import com.project.ircserver.ChannelMode;
 
 /**
  * Channel is responsible of an IRC channel.
@@ -56,23 +59,53 @@ import com.project.ircclient.Client;
  */
 public class Channel implements Serializable {
 
+    private static final String DEFAULT_TOPIC = " Welcome (:!. ";
+
     private static final long serialVersionUID = 1L;
 
     private String channelName;
+    private String channelTopic;
+    private ChannelMode channelMode;
 
     private HashMap<String, Client> clients = new HashMap<String, Client>();
     // This property holds a channel with registered clients.
-    private Map<String, HashMap<String, Client>> channel = new HashMap<String, HashMap<String, Client>>();
+    private Map<String, HashMap<String, Client>> channels = new HashMap<String, HashMap<String, Client>>();
 
     public Channel(final String channelName) {
-	this.channelName = channelName;
+	this(channelName, DEFAULT_TOPIC, PUBLIC);
     }
 
-    // Add client to the channel and send a JOIN MSG to all other clients.
+    public Channel(final String channelName, final String channelTopic) {
+	this(channelName, channelTopic, PUBLIC);
+    }
+
+    public Channel(final String channelName, final String channelTopic,
+	    final ChannelMode mode) {
+	this.channelName = channelName;
+	this.channelTopic = channelTopic;
+	this.channelMode = mode;
+    }
+
+    /** Add client to the channel and send a JOIN MSG to all other clients. */
     public void addClient(final Client client) {
 	clients.put(client.getNickname(), client);
-	channel.put(channelName, clients);
+	channels.put(channelName, clients);
 	sendJoinMsg(client);
+    }
+
+    /** Verify if the client is in the channel. */
+    public boolean hasClient(final String nickname) {
+	return clients.get(nickname) != null;
+    }
+
+    public Client findClient(final String nickname) {
+	return clients.get(nickname);
+    }
+
+    /** Remove the client with [nickname] from the channel. */
+    public void removeClient(final String nickname) {
+	clients.remove(nickname);
+	channels.put(channelName, clients);
     }
 
     public Channel setChannelName(final String channelName) {
@@ -85,12 +118,32 @@ public class Channel implements Serializable {
     }
 
     public void sendJoinMsg(final Client client) {
-	sendGlobalMessage(this, client, format("JOIN %s ", channelName));
+	sendGlobalMessage(this, format("JOIN %s ", channelName));
+	sendPrivateMessage(this, client, client.getNickname(),
+		format(" Topic for %s : %s", channelName, channelTopic));
     }
 
     /** @return a Map containing all the clients in the specify channel. */
     public HashMap<String, Client> getClients() {
-	return channel.get(channelName);
+	return channels.get(channelName);
+    }
+
+    public Channel setChannelTopic(String channelTopic) {
+	this.channelTopic = channelTopic;
+	return this;
+    }
+
+    public String getChannelTopic() {
+	return channelTopic;
+    }
+
+    public Channel setChannelMode(ChannelMode channelMode) {
+	this.channelMode = channelMode;
+	return this;
+    }
+
+    public ChannelMode getChannelMode() {
+	return channelMode;
     }
 
 }
