@@ -27,22 +27,20 @@ public class MockClient {
 
     public static void main(String[] args) {
 	Socket mockClient = null;// = createMockClient();
+
 	try {
 	    mockClient = new Socket(InetAddress.getLocalHost(),
 		    DEFAULT_IRC_PORT);
 	    sender = new PrintWriter(mockClient.getOutputStream(), AUTO_FLUSH);
 
-	    sendCfg(sender);
+	    sendCfg();
 
 	    reader = new BufferedReader(new InputStreamReader(
 		    mockClient.getInputStream()));
 
-	    String read = "";
-	    // System.out.println(" mock chat: -> " + read);
-	    // sender.println("");
+	    readerThread();
 
-	    while ((read = reader.readLine()) != null) {
-		System.out.println(" -> " + read);
+	    while (true) {
 		final String userInput = response();
 		System.out.println(userInput);
 		sender.println(userInput);
@@ -61,8 +59,25 @@ public class MockClient {
 	sender.println(message);
     }
 
-    private static void sendCfg(final PrintWriter sender) {
+    private static void sendCfg() {
 	sender.println(DERP + "," + TEST_CHANNEL);
+    }
+
+    private static void readerThread() {
+	new Thread() {
+	    @Override
+	    public void run() {
+		super.run();
+		try {
+		    String read = "";
+		    while ((read = reader.readLine()) != null) {
+			System.out.println(" -> " + read);
+		    }
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}.start();
     }
 
 }
