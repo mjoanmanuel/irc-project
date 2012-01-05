@@ -18,11 +18,14 @@ import com.project.ircserver.channel.Channel;
  */
 public class Protocol {
 
+    /** Nickname input. */
+    public static final int NICKNAME = 2;
+
     /** Client input message. */
-    private static final int MESSAGE = 1;
+    public static final int MESSAGE = 1;
 
     /** Holds the IRC command {@link Command}. */
-    private static final int PREFIX = 0;
+    public static final int PREFIX = 0;
 
     /**
      * Represents an regular expression for validating nicknames from a-z | A-Z
@@ -108,6 +111,7 @@ public class Protocol {
 	    final String[] extracted = extract(input);
 	    final String prefix = extracted[PREFIX];
 	    final String message = extracted[MESSAGE];
+	    final String nickname = extracted[NICKNAME];
 
 	    return proccesInput(channel, client, prefix, message);
 	}

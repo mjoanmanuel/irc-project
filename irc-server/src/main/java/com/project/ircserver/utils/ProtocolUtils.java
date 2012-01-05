@@ -8,6 +8,8 @@ import static com.project.ircserver.Command.ME;
 import static com.project.ircserver.Command.MODE;
 import static com.project.ircserver.Command.MSG;
 import static com.project.ircserver.Command.TOPIC;
+import static com.project.ircserver.protocol.Protocol.MESSAGE;
+import static com.project.ircserver.protocol.Protocol.PREFIX;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,13 +30,15 @@ import com.project.ircserver.channel.Channel;
  */
 public class ProtocolUtils {
 
+    private static final int COMMAND = 3;
+
     private static final String COMMAND_PREFIX = "/";
 
     private static final boolean AUTO_FLUSH = true;
 
     private static final String COMMA = ",";
 
-    public static final int CHANNEL_NAME = 1;
+    public static final int CHANNEL_NAME = 0;
 
     public static final int NICKNAME = 0;
 
@@ -44,11 +48,13 @@ public class ProtocolUtils {
     /** Goes after prefix. */
     public static final String SPACE = " ";
 
+    // /MSG [validNickname] [message]
     // TODO
     /** Send a private message to a specific client. */
     public static void sendPrivateMessage(final Channel channel,
-	    final Client client, final String message) {
-	sendMessage(client, message);
+	    final Client from, final String message) {
+	final Client to = channel.getClients().get("[buddynick]");
+	sendMessage(to, message);
     }
 
     // TODO CHECK IOEXCEPTION.
@@ -104,22 +110,37 @@ public class ProtocolUtils {
     /** Extract the prefix from the input. */
     public static String[] extract(final String message) {
 	if (!message.startsWith(COMMAND_PREFIX)) {
-	    return new String[] { EMPTY, message };
-	}
-	final StringBuilder prefix = new StringBuilder();
-	final StringBuilder msg = new StringBuilder();
-
-	final int length = message.length();
-	for (int i = 0; i < length; i++) {
-	    final String charac = message.substring(i, 1);
-	    if (SPACE.equals(charac)) {
-		msg.append(message.substring(i, length));
-		break;
-	    }
-	    prefix.append(charac);
+	    return new String[] { EMPTY, EMPTY, message };
 	}
 
-	return new String[] { prefix.toString(), msg.toString() };
+	String prefix = EMPTY;
+	String msg = EMPTY;
+	// could be nickname or channelname
+	String option = EMPTY;
+
+	final String[] decode = message.split(SPACE);
+
+	prefix = decode[PREFIX];
+
+	if (MSG.equals(prefix)) {
+	    option = decode[NICKNAME];
+	    // TODO add message
+	    msg = decode[MESSAGE];
+
+	} else if (JOIN.equals(prefix)) {
+	    option = decode[CHANNEL_NAME];
+	    msg = EMPTY;
+	} else if (LEAVE.equals(prefix)) {
+	    option = decode[CHANNEL_NAME];
+	    msg = EMPTY;
+	} else if (TOPIC.equals(prefix)) {
+	    option = decode[CHANNEL_NAME];
+	    // TODO add message
+	    // this is the topic channel
+	    msg = decode[MESSAGE];
+	}
+
+	return new String[] { prefix, option, msg };
     }
 
     /** Handle the user input. */
@@ -140,7 +161,7 @@ public class ProtocolUtils {
 	} else if (MODE.equals(prefix)) {
 	    // changeChannelMode();
 	} else if (MSG.equals(prefix)) {
-	    // sendPrivateMessage(channel,channel.getClients().get("tobuddy"),
+	    sendPrivateMessage(channel, client, message);
 	    // message,
 	    // "from[yournick]");
 	} else if (TOPIC.equals(prefix)) {
