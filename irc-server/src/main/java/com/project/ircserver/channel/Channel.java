@@ -7,7 +7,6 @@ import static java.lang.String.format;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.project.ircclient.Client;
 import com.project.ircserver.ChannelMode;
@@ -68,8 +67,6 @@ public class Channel implements Serializable {
     private ChannelMode channelMode;
 
     private HashMap<String, Client> clients = new HashMap<String, Client>();
-    // This property holds a channel with registered clients.
-    private Map<String, HashMap<String, Client>> channels = new HashMap<String, HashMap<String, Client>>();
 
     public Channel(final String channelName) {
 	this(channelName, DEFAULT_TOPIC, PUBLIC);
@@ -88,24 +85,24 @@ public class Channel implements Serializable {
 
     /** Add client to the channel and send a JOIN MSG to all other clients. */
     public void addClient(final Client client) {
-	clients.put(client.getNickname(), client);
-	channels.put(channelName, clients);
+	getClients().put(client.getNickname(), client);
+	// channels.put(channelName, clients);
 	sendJoinMsg(client);
     }
 
     /** Verify if the client is in the channel. */
     public boolean hasClient(final String nickname) {
-	return clients.get(nickname) != null;
+	return getClients().get(nickname) != null;
     }
 
     public Client findClient(final String nickname) {
-	return clients.get(nickname);
+	return getClients().get(nickname);
     }
 
     /** Remove the client with [nickname] from the channel. */
     public void removeClient(final String nickname) {
-	clients.remove(nickname);
-	channels.put(channelName, clients);
+	getClients().remove(nickname);
+	// channels.put(channelName, clients);
     }
 
     public Channel setChannelName(final String channelName) {
@@ -121,11 +118,6 @@ public class Channel implements Serializable {
 	sendGlobalMessage(this, format("JOIN %s ", channelName));
 	sendPrivateMessage(this, client, client.getNickname(),
 		format(" Topic for %s : %s", channelName, channelTopic));
-    }
-
-    /** @return a Map containing all the clients in the specify channel. */
-    public HashMap<String, Client> getClients() {
-	return channels.get(channelName);
     }
 
     public Channel setChannelTopic(String channelTopic) {
@@ -144,6 +136,10 @@ public class Channel implements Serializable {
 
     public ChannelMode getChannelMode() {
 	return channelMode;
+    }
+
+    public HashMap<String, Client> getClients() {
+	return clients;
     }
 
 }
