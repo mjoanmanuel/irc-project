@@ -1,8 +1,12 @@
 package com.project.ircserver.protocol;
 
+import java.util.HashMap;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import com.project.ircserver.channel.Channel;
 
 /**
  * ProtocolTest is responsible of
@@ -11,7 +15,8 @@ import org.junit.Test;
  */
 public class ProtocolTest {
 
-    private final Protocol protocol = new Protocol();
+    private final Protocol protocol = new Protocol(
+	    new HashMap<String, Channel>(0));
 
     @Test
     public void testValidateNicknames() {

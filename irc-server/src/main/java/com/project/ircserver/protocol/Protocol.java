@@ -7,7 +7,6 @@ import static com.project.ircserver.utils.ProtocolUtils.extract;
 import static com.project.ircserver.utils.ProtocolUtils.isValidCommand;
 import static com.project.ircserver.utils.ProtocolUtils.proccesInput;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.project.ircclient.Client;
@@ -42,17 +41,6 @@ public class Protocol {
     private static final String CHANNELNAME_REGEX = "((#|&{1})[a-z0-9A-Z0-9]{1,200})";
 
     /**
-     * Holds the clients in the server making them unique.
-     * 
-     * @param String
-     *            - is the nickname.
-     * 
-     * @param Client
-     *            - hold the client Entity.
-     */
-    private final Map<String, Client> clients = new HashMap<String, Client>(0);
-
-    /**
      * Holds the channels in the server making them unique.
      * 
      * @param String
@@ -60,10 +48,10 @@ public class Protocol {
      * @param Channel
      *            hold the channel Entity containing a list of clients.
      */
-    private final Map<String, Channel> channels = new HashMap<String, Channel>(
-	    0);
+    private final Map<String, Channel> channels;
 
-    public Protocol() {
+    public Protocol(final Map<String, Channel> channels) {
+	this.channels = channels;
     }
 
     /** IRC Protocol said that proper nickname is lenght of 9. */
@@ -75,8 +63,8 @@ public class Protocol {
 	return channelName.matches(CHANNELNAME_REGEX);
     }
 
-    public Client findClientByNickname(final String nickname) {
-	return clients.get(nickname);
+    public Client findClient(final String channelname, final String nickname) {
+	return findChannel(channelname).getClients().get(nickname);
     }
 
     public Channel findChannel(final String channelName) {
@@ -84,8 +72,9 @@ public class Protocol {
     }
 
     /** Puts a new client into the clients Map. */
-    public void registerClient(final String nickname, final Client client) {
-	clients.put(nickname, client);
+    public void registerClient(final String channelname, final String nickname,
+	    final Client client) {
+	channels.get(channelname).getClients().put(nickname, client);
     }
 
     public Channel createChannel(final Channel channel) {
@@ -93,14 +82,10 @@ public class Protocol {
 	return channel;
     }
 
-    /** Updates the clients Map. */
-    public void updateClients(final HashMap<String, Client> newClients) {
-	newClients.putAll(newClients);
-    }
-
     /** Validates if the nickname passed is already registered */
-    public boolean isNickNameRegistered(final String nickname) {
-	return clients.containsKey(nickname);
+    public boolean isNickNameEnabled(final String channelname,
+	    final String nickname) {
+	return findChannel(channelname).getClients().containsKey(nickname);
     }
 
     public boolean isChannelRegistered(final String channelname) {
