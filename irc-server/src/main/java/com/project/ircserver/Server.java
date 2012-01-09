@@ -5,6 +5,7 @@ package com.project.ircserver;
 
 import static com.project.ircserver.utils.ProtocolUtils.createClient;
 import static com.project.ircserver.utils.ProtocolUtils.readCfgMessage;
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class Server extends ServerSocket {
 
     /** Start the server. */
     public void start() {
+	out.println(" Server started!. ");
 	while (ALWAYS_LISTENING) {
 	    listening();
 	}
@@ -67,8 +69,8 @@ public class Server extends ServerSocket {
 	}
     }
 
-    public Map<String, Channel> getChannels() {
-	return channels;
+    public Channel findChannel(final String channelname) {
+	return channels.get(channelname);
     }
 
     private boolean connectClient(final Socket socket) {
@@ -81,10 +83,13 @@ public class Server extends ServerSocket {
 	    // If the channel doesn't exist, is created implicitly with the
 	    // client as operator by default.
 	    if (!protocol.validateChannelName(channelname)) {
+		System.out
+			.println(format(
+				" channelname: %s is not correct, are you missing # or &? ",
+				channelname));
 		return false;
 	    }
-	    channel = protocol.createChannel(new Channel(channelname));
-	    channels.put(channelname, channel);
+	    channel = protocol.createChannel(channelname);
 
 	    if (!protocol.validateNickname(nickname)) {
 		channels.remove(channelname);
@@ -97,7 +102,6 @@ public class Server extends ServerSocket {
 	final Client client = createClient(this, channel, nickname, socket);
 
 	protocol.registerClient(channelname, nickname, client);
-	channel.addClient(client);
 	new Worker(client, channel, protocol).start();
 
 	return true;

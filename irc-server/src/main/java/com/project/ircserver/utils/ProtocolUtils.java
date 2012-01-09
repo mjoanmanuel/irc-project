@@ -1,5 +1,6 @@
 package com.project.ircserver.utils;
 
+import static com.project.ircserver.Command.INVITE;
 import static com.project.ircserver.Command.JOIN;
 import static com.project.ircserver.Command.KICK;
 import static com.project.ircserver.Command.LEAVE;
@@ -22,6 +23,7 @@ import com.project.ircclient.Client;
 import com.project.ircserver.Command;
 import com.project.ircserver.Server;
 import com.project.ircserver.channel.Channel;
+import com.project.ircserver.protocol.Protocol;
 
 /**
  * ProtocolUtils is responsible of
@@ -54,11 +56,12 @@ public class ProtocolUtils {
     public static void sendPrivateMessage(final Channel channel,
 	    final Client from, final String toNickname, final String message) {
 	if (!isClientConnected(channel, toNickname)) {
-	    // TODO an error msg that client is not avaible.
+	    sendMessage(from,
+		    format(" *** nickname: %s not found ", toNickname));
 	    return;
 	}
 
-	final String msg = format(" -> %s %s", from.getNickname(), message);
+	final String msg = format(" %s %s", from.getNickname(), message);
 	sendMessage(channel.findClient(toNickname), msg);
     }
 
@@ -74,12 +77,35 @@ public class ProtocolUtils {
 	}
     }
 
-    // TODO
-    public static void joinChannel() {
+    // TODO : use client.getJoinChannelCount() MAX = 10;
+    /** Join the client to a specific channel. */
+    public static void joinChannel(final Protocol protocol,
+	    final String channelname, final Client client) {
+	if (!protocol.isChannelRegistered(channelname)) {
+	    if (!protocol.validateChannelName(channelname)) {
+		sendMessage(client,
+			format(" *** channel %s not found ", channelname));
+		return;
+	    }
+	    protocol.createChannel(channelname);
+	    final String operator = "@".concat(client.getNickname());
+	    protocol.registerClient(channelname, operator, client);
+	} else {
+	    protocol.registerClient(channelname, client.getNickname(), client);
+	}
     }
 
-    // TODO
-    public static void invite() {
+    public static void invite(final Channel channel, final Client client,
+	    final String nickname, final String channelname) {
+	if (!isClientConnected(channel, nickname)) {
+	    sendMessage(client, format(" *** nickname %s not found ", nickname));
+	    return;
+	}
+
+	final String msg = String.format(
+		" *** %s invited you to join channel %s ",
+		client.getNickname(), channelname);
+	sendMessage(client, msg);
     }
 
     public static void kick(final Channel channel, final Client client,
@@ -94,30 +120,48 @@ public class ProtocolUtils {
     }
 
     public static void leaveChannel(final Channel channel, final Client client) {
+	final String msg = format(" *** %s has leave channel %s",
+		client.getNickname(), channel.getChannelName());
 	closeConnection(channel, client.getNickname());
+	sendGlobalMessage(channel, msg);
     }
 
-    // TODO
-    public static void changeChannelMode() {
+    // TODO handle MODE propertly.
+    public static void changeChannelMode(final Channel channel,
+	    final Client client, final String newChannelMode) {
+	if (!client.isOperator()) {
+	    sendMessage(
+		    client,
+		    format(" cannot change channel MODE, you are not operator. "));
+	    return;
+	}
+	final String msg = format(
+		" *** Mode change to '%s' on channel %s by %s ",
+		newChannelMode, channel.getChannelName(), client.getNickname());
+	sendGlobalMessage(channel, msg);
+
+    }
+
+    public static void channelMode(final Channel channel, final Client client) {
+	final String msg = String.format(" *** Mode for channel %s is '%s' ",
+		channel.getChannelName(), channel.getChannelMode());
+	sendMessage(client, msg);
     }
 
     public static void changeChannelTopic(final Channel channel,
 	    final Client client, final String option, final String newTopic) {
+	if (!client.isOperator()) {
+	    sendMessage(
+		    client,
+		    format(" cannot change channel MODE, you are not operator. "));
+	    return;
+	}
+
 	channel.setChannelTopic(newTopic);
-	final String msg = format(" *** %s has changed the topic on %s to %s ",
+	final String msg = format(
+		" *** %s has changed the topic on %s to '%s' ",
 		client.getNickname(), channel.getChannelName(), newTopic);
 	sendGlobalMessage(channel, msg);
-    }
-
-    private static void sendMessage(final Client client, final String message) {
-	PrintWriter writer = null;
-	try {
-	    writer = new PrintWriter(client.getSocket().getOutputStream(),
-		    AUTO_FLUSH);
-	    writer.println(message);
-	} catch (final IOException ex) {
-	    ex.printStackTrace();
-	}
     }
 
     /** Extract the prefix from the input. */
@@ -143,7 +187,10 @@ public class ProtocolUtils {
 	    option = decode[CHANNEL_NAME];
 
 	} else if (LEAVE.toString().equals(prefix)) {
-	    option = decode[CHANNEL_NAME];
+	    final boolean hasChannelname = decode.length > 1;
+	    if (hasChannelname) {
+		option = decode[CHANNEL_NAME];
+	    }
 
 	} else if (TOPIC.toString().equals(prefix)) {
 	    option = decode[CHANNEL_NAME];
@@ -157,24 +204,20 @@ public class ProtocolUtils {
 
 	} else if (MODE.toString().equals(prefix)) {
 	    option = decode[CHANNEL_MODE];
+	    option = decodeMessage(MESSAGE, decode);
+
+	} else if (INVITE.toString().equals(prefix)) {
+	    option = decode[NICKNAME];
+	    msg = decodeMessage(CHANNEL_NAME, decode);
 	}
 
 	return new String[] { prefix, option, msg };
     }
 
-    private static String decodeMessage(int position, final String[] decode) {
-	final StringBuilder message = new StringBuilder();
-	for (; position < decode.length; position++) {
-	    message.append(decode[position] + SPACE);
-	}
-
-	return message.toString();
-    }
-
     /** Handle the user input. */
-    public static String proccesInput(final Channel channel,
-	    final Client client, final Command prefix, final String option,
-	    final String message) {
+    public static String proccesInput(final Protocol protocol,
+	    final Channel channel, final Client client, final Command prefix,
+	    final String option, final String message) {
 	final String nickname = client.getNickname();
 
 	switch (prefix) {
@@ -184,17 +227,21 @@ public class ProtocolUtils {
 	    sendGlobalMessage(channel, compoundMessage);
 	    break;
 	case JOIN:
-	    joinChannel();
+	    joinChannel(protocol, option, client);
 	    break;
 	case INVITE:
-	    invite();
+	    invite(channel, client, option, message);
 	case KICK:
 	    kick(channel, client, option, message);
 	    break;
 	case LEAVE:
 	    leaveChannel(channel, client);
 	case MODE:
-	    changeChannelMode();
+	    if (!message.isEmpty()) {
+		changeChannelMode(channel, client, message);
+	    }
+
+	    channelMode(channel, client);
 	    break;
 	case MSG:
 	    sendPrivateMessage(channel, client, option, message);
@@ -256,6 +303,26 @@ public class ProtocolUtils {
 	    }
 	    channel.findClient(nickname).getSocket().close();
 	    channel.removeClient(nickname);
+	} catch (final IOException ex) {
+	    ex.printStackTrace();
+	}
+    }
+
+    private static String decodeMessage(int position, final String[] decode) {
+	final StringBuilder message = new StringBuilder();
+	for (; position < decode.length; position++) {
+	    message.append(decode[position] + SPACE);
+	}
+
+	return message.toString();
+    }
+
+    private static void sendMessage(final Client client, final String message) {
+	PrintWriter writer = null;
+	try {
+	    writer = new PrintWriter(client.getSocket().getOutputStream(),
+		    AUTO_FLUSH);
+	    writer.println(message);
 	} catch (final IOException ex) {
 	    ex.printStackTrace();
 	}

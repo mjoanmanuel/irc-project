@@ -2,6 +2,7 @@ package com.project.ircserver;
 
 import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
 import static java.lang.System.in;
+import static java.lang.System.out;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class MockClient {
 	    readerThread();
 
 	    while (true) {
+		out.print(" -> ");
 		final String userInput = response();
 		System.out.println(userInput);
 		sender.println(userInput);

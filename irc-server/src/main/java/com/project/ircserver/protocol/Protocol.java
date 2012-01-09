@@ -74,11 +74,13 @@ public class Protocol {
     /** Puts a new client into the clients Map. */
     public void registerClient(final String channelname, final String nickname,
 	    final Client client) {
-	channels.get(channelname).getClients().put(nickname, client);
+	final Channel channel = channels.get(channelname);
+	channel.addClient(client);
     }
 
-    public Channel createChannel(final Channel channel) {
-	channels.put(channel.getChannelName(), channel);
+    public Channel createChannel(final String channelname) {
+	final Channel channel = new Channel(channelname);
+	channels.put(channelname, channel);
 	return channel;
     }
 
@@ -104,7 +106,7 @@ public class Protocol {
 	    final String message = extracted[MESSAGE];
 	    final String option = extracted[OPTION];
 
-	    return proccesInput(channel, client, prefix, option, message);
+	    return proccesInput(this, channel, client, prefix, option, message);
 	}
 
 	return EMPTY;

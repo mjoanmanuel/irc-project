@@ -85,24 +85,22 @@ public class Channel implements Serializable {
 
     /** Add client to the channel and send a JOIN MSG to all other clients. */
     public void addClient(final Client client) {
-	getClients().put(client.getNickname(), client);
-	// channels.put(channelName, clients);
+	clients.put(client.getNickname(), client);
 	sendJoinMsg(client);
     }
 
     /** Verify if the client is in the channel. */
     public boolean hasClient(final String nickname) {
-	return getClients().get(nickname) != null;
+	return clients.get(nickname) != null;
     }
 
     public Client findClient(final String nickname) {
-	return getClients().get(nickname);
+	return clients.get(nickname);
     }
 
     /** Remove the client with [nickname] from the channel. */
     public void removeClient(final String nickname) {
-	getClients().remove(nickname);
-	// channels.put(channelName, clients);
+	clients.remove(nickname);
     }
 
     public Channel setChannelName(final String channelName) {
@@ -115,7 +113,8 @@ public class Channel implements Serializable {
     }
 
     public void sendJoinMsg(final Client client) {
-	sendGlobalMessage(this, format("JOIN %s ", channelName));
+	sendGlobalMessage(this,
+		format(" %s JOIN %s ", client.getNickname(), channelName));
 	sendPrivateMessage(this, client, client.getNickname(),
 		format(" Topic for %s : %s", channelName, channelTopic));
     }

@@ -44,6 +44,8 @@ public class Worker extends Thread {
 	    while ((receiveMessageString = receiver.readLine()) != null) {
 		final String response = protocol.handleInput(channel, client,
 			receiveMessageString);
+
+		// LOGGING INTO SERVER OUTPUT.
 		out.println(format(" channel: %s, nickname: %s, message: %s",
 			channel.getChannelName(), client.getNickname(),
 			response));
