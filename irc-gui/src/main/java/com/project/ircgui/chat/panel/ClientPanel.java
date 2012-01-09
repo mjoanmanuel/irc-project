@@ -1,13 +1,16 @@
 package com.project.ircgui.chat.panel;
 
-import java.awt.event.ActionEvent;
+import static com.project.ircgui.factory.ComponentFactory.createLabel;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
+import java.awt.BorderLayout;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import com.project.ircgui.factory.ComponentFactory;
 import com.project.ircgui.utils.I18nUtils;
 
 /**
@@ -23,26 +26,17 @@ public class ClientPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public ClientPanel() {
-	add(createPrivateMessageButton(properties.getString("privateMessage")));
-	add(createConnectedClientList());
+    private DefaultListModel listModel = new DefaultListModel();
+
+    public ClientPanel(final String channelname) {
+	setLayout(new BorderLayout());
+	add(createLabel(properties.getString("online")), NORTH);
+	add(createConnectedClientList(channelname), CENTER);
     }
 
-    private JList createConnectedClientList() {
-	final JList list = new JList();
-	return list;
+    private JScrollPane createConnectedClientList(final String channelname) {
+	final JList list = new JList(listModel);
+	return new JScrollPane(list);
     }
 
-    private JButton createPrivateMessageButton(final String title) {
-	final JButton button = ComponentFactory.createButton(title,
-		new AbstractAction() {
-
-		    private static final long serialVersionUID = 1L;
-
-		    public void actionPerformed(final ActionEvent e) {
-			// TODO open a private message frame.
-		    }
-		});
-	return button;
-    }
 }

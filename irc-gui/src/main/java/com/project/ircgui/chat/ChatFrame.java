@@ -5,10 +5,9 @@ package com.project.ircgui.chat;
 
 import static com.project.ircgui.factory.ComponentFactory.createMenu;
 import static com.project.ircgui.factory.ComponentFactory.createMenuItem;
-import static java.awt.BorderLayout.EAST;
-import static java.awt.BorderLayout.WEST;
+import static java.awt.BorderLayout.CENTER;
 
-import java.awt.Container;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSplitPane;
 
 import com.project.ircgui.chat.panel.ChatPanel;
 import com.project.ircgui.chat.panel.ClientPanel;
@@ -31,12 +31,28 @@ public class ChatFrame extends JFrame {
     private static final String I18N_FILE = ChatFrame.class.getCanonicalName();
     private static final I18nUtils properties = new I18nUtils(I18N_FILE);
 
+    private ClientPanel clientPanel;
+    private ChatPanel chatPanel;
+
     public ChatFrame() {
 	init();
-	final Container container = getContentPane();
-	container.add(new ClientPanel(), WEST);
-	container.add(new ChatPanel(), EAST);
+	setLayout(new BorderLayout());
+	add(createSplipPanel(), CENTER);
 	pack();
+    }
+
+    private JSplitPane createSplipPanel() {
+	final JSplitPane splitPanel = new JSplitPane();
+	splitPanel.setDividerLocation(150);
+	splitPanel.setDividerSize(7);
+	splitPanel.setOneTouchExpandable(true);
+	chatPanel = new ChatPanel();
+	clientPanel = new ClientPanel(chatPanel.getChannelName());
+
+	splitPanel.setLeftComponent(clientPanel);
+	splitPanel.setRightComponent(chatPanel);
+
+	return splitPanel;
     }
 
     private void createMenuBar() {
@@ -50,7 +66,8 @@ public class ChatFrame extends JFrame {
 	createMenuBar();
 	setTitle(properties.getString("chatTitle"));
 	setDefaultCloseOperation(EXIT_ON_CLOSE);
-	setSize(400, 400);
+	setSize(450, 430);
+	setLocation(120, 90);
 	setVisible(true);
     }
 

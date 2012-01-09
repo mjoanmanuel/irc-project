@@ -1,4 +1,4 @@
-package com.project.ircgui;
+package com.project.ircgui.setting;
 
 import static com.project.ircgui.factory.ComponentFactory.createMenu;
 import static com.project.ircgui.factory.ComponentFactory.createMenuBar;
