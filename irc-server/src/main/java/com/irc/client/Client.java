@@ -17,8 +17,6 @@ public class Client {
     private Long joinChannel;
     private String nickname; // holds the nickname for the client.
     private Server server; // client connected to the irc server.
-    // Operator can do whatever he/she wants. TODO : see if we can implement
-    // this.
     private String channelname;
     private Socket socket;
     private boolean isOperator;
