@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import com.project.ircclient.Client;
 import com.project.ircserver.channel.Channel;
@@ -19,6 +21,7 @@ import com.project.ircserver.protocol.Protocol;
  */
 public class Worker extends Thread {
 
+    private static final boolean AUTO_FLUSH = true;
     private Client client;
     private Channel channel;
     private Protocol protocol;
@@ -37,20 +40,26 @@ public class Worker extends Thread {
 	BufferedReader receiver = null;
 
 	try {
-	    sender = new PrintWriter(client.getSocket().getOutputStream());
+	    sender = new PrintWriter(client.getSocket().getOutputStream(),
+		    AUTO_FLUSH);
 	    receiver = new BufferedReader(new InputStreamReader(client
 		    .getSocket().getInputStream()));
 	    String receiveMessageString = "";
 	    while ((receiveMessageString = receiver.readLine()) != null) {
-		final String response = protocol.handleInput(channel, client,
-			receiveMessageString);
+		if (receiveMessageString.equals("[get]")) {
+		    // send online users.
+		    sendList(sender);
+		} else {
+		    final String response = protocol.handleInput(channel,
+			    client, receiveMessageString);
+		    // LOGGING INTO SERVER OUTPUT.
+		    out.println(format(
+			    " channel: %s, nickname: %s, message: %s",
+			    channel.getChannelName(), client.getNickname(),
+			    response));
 
-		// LOGGING INTO SERVER OUTPUT.
-		out.println(format(" channel: %s, nickname: %s, message: %s",
-			channel.getChannelName(), client.getNickname(),
-			response));
-
-		sender.write(response);
+		    sender.write(response);
+		}
 	    }
 	} catch (final IOException ex) {
 	    ex.printStackTrace();
@@ -62,6 +71,17 @@ public class Worker extends Thread {
 	}
     }
 
+    private void sendList(final PrintWriter sendMessage) {
+	final Iterator<Entry<String, Client>> iterator = channel.getClients()
+		.entrySet().iterator();
+	// sendMessage.println("[onlinelist]");
+	while (iterator.hasNext()) {
+	    final Entry<String, Client> current = iterator.next();
+	    sendMessage.println(current.getKey());
+	}
+	sendMessage.println("[end]");
+    }
+
     private void closeOutputResource(final PrintWriter sendMessage) {
 	sendMessage.close();
     }
@@ -70,6 +90,7 @@ public class Worker extends Thread {
 	try {
 	    receiveMessage.close();
 	} catch (IOException e) {
+	    e.printStackTrace();
 	}
     }
 

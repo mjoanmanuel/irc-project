@@ -18,7 +18,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 
 import com.project.ircgui.chat.panel.ChatPanel;
-import com.project.ircgui.chat.panel.ClientPanel;
 import com.project.ircgui.factory.ComponentFactory;
 import com.project.ircgui.utils.I18nUtils;
 
@@ -31,7 +30,6 @@ public class ChatFrame extends JFrame {
     private static final String I18N_FILE = ChatFrame.class.getCanonicalName();
     private static final I18nUtils properties = new I18nUtils(I18N_FILE);
 
-    private ClientPanel clientPanel;
     private ChatPanel chatPanel;
 
     public ChatFrame() {
@@ -47,9 +45,8 @@ public class ChatFrame extends JFrame {
 	splitPanel.setDividerSize(7);
 	splitPanel.setOneTouchExpandable(true);
 	chatPanel = new ChatPanel();
-	clientPanel = new ClientPanel(chatPanel.getChannelName());
 
-	splitPanel.setLeftComponent(clientPanel);
+	splitPanel.setLeftComponent(chatPanel.getClientPanel());
 	splitPanel.setRightComponent(chatPanel);
 
 	return splitPanel;

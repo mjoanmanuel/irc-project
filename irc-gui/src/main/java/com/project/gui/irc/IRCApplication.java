@@ -4,9 +4,7 @@ import static com.project.ircserver.Server.DEFAULT_IRC_PORT;
 
 import java.io.IOException;
 
-import com.project.ircgui.chat.ChatFrame;
 import com.project.ircserver.Server;
-import com.project.ircserver.channel.Channel;
 
 /**
  * IRCApplication is responsible of.
@@ -29,14 +27,6 @@ public class IRCApplication {
 	    System.out.println(" Change server port!. ");
 	    e.printStackTrace();
 	}
-    }
-
-    public static void createChatFrame() {
-	new ChatFrame();
-    }
-
-    public static Channel findChannel(final String channelname) {
-	return null;
     }
 
 }

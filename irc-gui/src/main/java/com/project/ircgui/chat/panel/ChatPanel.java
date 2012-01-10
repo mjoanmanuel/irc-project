@@ -3,6 +3,7 @@ package com.project.ircgui.chat.panel;
 import static com.project.ircgui.factory.ComponentFactory.createButton;
 import static com.project.ircgui.factory.ComponentFactory.createLabel;
 import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
+import static com.project.ircserver.utils.ProtocolUtils.SPACE;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;
@@ -20,6 +21,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -103,8 +106,39 @@ public class ChatPanel extends JPanel {
 
     }
 
+    private class ClientPanel extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+
+	private DefaultListModel listModel = new DefaultListModel();
+
+	public ClientPanel() {
+	    setLayout(new BorderLayout());
+	    add(createLabel(properties.getString("online")), NORTH);
+	    add(createConnectedClientList(), CENTER);
+	}
+
+	private JScrollPane createConnectedClientList() {
+	    final JList list = new JList(listModel);
+	    return new JScrollPane(list);
+	}
+
+	public void updateList(final String nickname, final boolean update) {
+	    if (update) {
+		if (!listModel.contains(nickname)) {
+		    listModel.addElement(nickname);
+		}
+	    } else {
+		listModel.removeElement(nickname);
+	    }
+	}
+    }
+
     private class ClientImpl {
 
+	private static final boolean REMOVE = false;
+	private static final boolean UPDATE = true;
+	private static final String LEFT_MSG = "dejado";
 	private static final boolean RUN_WILDLY = true;
 	private static final boolean AUTO_FLUSH = true;
 
@@ -119,8 +153,8 @@ public class ChatPanel extends JPanel {
 	    this.channelname = channelname;
 	}
 
-	public void start() {
-	    Socket client = null;// = createMockClient();
+	public synchronized void start() {
+	    Socket client = null;
 
 	    try {
 		client = new Socket(InetAddress.getLocalHost(),
@@ -150,10 +184,6 @@ public class ChatPanel extends JPanel {
 	    return nickname;
 	}
 
-	public String getChannelName() {
-	    return channelname;
-	}
-
 	private void sendCfg() {
 	    sender.println(nickname + "," + channelname);
 	}
@@ -161,19 +191,52 @@ public class ChatPanel extends JPanel {
 	private void readerThread() {
 	    new Thread() {
 		@Override
-		public void run() {
+		public synchronized void run() {
 		    super.run();
 		    try {
 			String read = BLANK_INPUT_TEXT_AREA;
 			while ((read = reader.readLine()) != null) {
-			    recieveMessage.append(read + "\n");
+			    if (read.contains("[onlinelist]")) {
+				updateList(null, UPDATE);
+			    } else {
+				if (!hasLeftMsg(read)) {
+				    recieveMessage.append(read + "\n");
+				} else {
+				    final String nickname = read.split(SPACE)[1];
+				    updateList(nickname, REMOVE);
+				    recieveMessage.append(read + "\n");
+				}
+			    }
 			}
 		    } catch (IOException e) {
 			e.printStackTrace();
 		    }
 		}
+
+		private boolean hasLeftMsg(final String read) {
+		    final String[] split = read.split(SPACE);
+		    for (final String elem : split) {
+			if (elem.equals(LEFT_MSG))
+			    return true;
+		    }
+		    return false;
+		}
+
+		private void updateList(final String nickname,
+			final boolean update) throws IOException {
+		    String read;
+		    if (update) {
+			sender.println("[get]");
+			while (!(read = reader.readLine()).equals("[end]")) {
+			    clientPanel.updateList(read, update);
+			}
+		    } else {
+			clientPanel.updateList(nickname, update);
+		    }
+		}
 	    }.start();
 	}
+
     }
 
     private static final String FILE_I18N = ChatPanel.class.getCanonicalName();
@@ -182,6 +245,7 @@ public class ChatPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private ClientImpl client;
+    private ClientPanel clientPanel = new ClientPanel();
     private JTextArea recieveMessage;
     private JTextArea inputMessage;
 
@@ -194,15 +258,15 @@ public class ChatPanel extends JPanel {
 	setVisible(true);
     }
 
-    public String getChannelName() {
-	return client.getChannelName();
+    public JPanel getClientPanel() {
+	return clientPanel;
     }
 
     private void configure() {
-	final String nickname = showInputDialog(null, "nickname: ", "Nickname",
+	final String nickname = showInputDialog(null, "usuario: ", "Usuario",
 		QUESTION_MESSAGE);
-	final String channelname = showInputDialog(null, "channel name: ",
-		"Channel name", QUESTION_MESSAGE);
+	final String channelname = showInputDialog(null, "canal: ",
+		"Canal -> *Debe tener # o & al inicio.", QUESTION_MESSAGE);
 	client = new ClientImpl(nickname, channelname);
 	new Thread() {
 	    @Override

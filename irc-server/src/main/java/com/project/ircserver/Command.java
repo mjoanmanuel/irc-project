@@ -62,6 +62,13 @@ public enum Command {
 	    return "/MSG";
 	}
     },
+    /** Change the user nickname. */
+    NICK {
+	@Override
+	public String toString() {
+	    return "/NICK";
+	}
+    },
 
     /** A unknow command. */
     NONCOMMAND {

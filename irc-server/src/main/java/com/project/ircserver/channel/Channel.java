@@ -10,6 +10,8 @@ import java.util.HashMap;
 
 import com.project.ircclient.Client;
 import com.project.ircserver.ChannelMode;
+import com.project.ircserver.utils.I18nUtils;
+import com.project.ircserver.utils.ProtocolUtils;
 
 /**
  * Channel is responsible of an IRC channel.
@@ -58,7 +60,10 @@ import com.project.ircserver.ChannelMode;
  */
 public class Channel implements Serializable {
 
-    private static final String DEFAULT_TOPIC = " Welcome (:!. ";
+    private static final boolean IS_JOIN = true;
+    private static final String I18N_FILE = ProtocolUtils.class
+	    .getCanonicalName();
+    private static final I18nUtils properties = new I18nUtils(I18N_FILE);
 
     private static final long serialVersionUID = 1L;
 
@@ -69,7 +74,7 @@ public class Channel implements Serializable {
     private HashMap<String, Client> clients = new HashMap<String, Client>();
 
     public Channel(final String channelName) {
-	this(channelName, DEFAULT_TOPIC, PUBLIC);
+	this(channelName, properties.getString("welcomeMsg"), PUBLIC);
     }
 
     public Channel(final String channelName, final String channelTopic) {
@@ -113,10 +118,17 @@ public class Channel implements Serializable {
     }
 
     public void sendJoinMsg(final Client client) {
-	sendGlobalMessage(this,
-		format(" %s JOIN %s ", client.getNickname(), channelName));
-	sendPrivateMessage(this, client, client.getNickname(),
-		format(" Topic for %s : %s", channelName, channelTopic));
+	sendGlobalMessage(
+		this,
+		format(properties.getString("joinMsg"), client.getNickname(),
+			channelName));
+	sendPrivateMessage(
+		this,
+		client,
+		client.getNickname(),
+		format(properties.getString("topicMsg"), channelName,
+			channelTopic), IS_JOIN);
+	sendGlobalMessage(this, "[onlinelist]");
     }
 
     public Channel setChannelTopic(String channelTopic) {

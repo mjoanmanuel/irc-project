@@ -4,8 +4,10 @@ import static com.project.ircserver.Command.INVITE;
 import static com.project.ircserver.Command.JOIN;
 import static com.project.ircserver.Command.KICK;
 import static com.project.ircserver.Command.LEAVE;
+import static com.project.ircserver.Command.ME;
 import static com.project.ircserver.Command.MODE;
 import static com.project.ircserver.Command.MSG;
+import static com.project.ircserver.Command.NICK;
 import static com.project.ircserver.Command.TOPIC;
 import static com.project.ircserver.protocol.Protocol.MESSAGE;
 import static com.project.ircserver.protocol.Protocol.PREFIX;
@@ -32,37 +34,45 @@ import com.project.ircserver.protocol.Protocol;
  */
 public class ProtocolUtils {
 
-    private static final int CHANNEL_MODE = 1;
-
-    private static final int HAS_MESSAGE = 3;
-
-    public static final int CHANNEL_NAME = 1;
-
-    public static final int NICKNAME = 1;
-
-    private static final String COMMAND_PREFIX = "/";
-
-    private static final boolean AUTO_FLUSH = true;
-
-    private static final String COMMA = ",";
-
     /** Represents an empty string. */
     public static final String EMPTY = "";
-
     /** Goes after prefix. */
     public static final String SPACE = " ";
+    public static final int CHANNEL_NAME = 1;
+    public static final int NICKNAME = 1;
+
+    private static final boolean IS_NOT_JOIN = false;
+    private static final String GLOBAL_MSG_FORMAT = " %s -> %s ";
+    private static final String ME_MSG_FORMAT = " %s -> * %s %s ";
+    private static final String I18N_FILE = ProtocolUtils.class
+	    .getCanonicalName();
+    private static final I18nUtils properties = new I18nUtils(I18N_FILE);
+    private static final int CHANNEL_MODE = 1;
+    private static final int HAS_MESSAGE = 3;
+    private static final String COMMAND_PREFIX = "/";
+    private static final boolean AUTO_FLUSH = true;
+    private static final String COMMA = ",";
 
     /** Send a private message to a specific client. */
     public static void sendPrivateMessage(final Channel channel,
-	    final Client from, final String toNickname, final String message) {
+	    final Client from, final String toNickname, final String message,
+	    final boolean isJoin) {
 	if (!isClientConnected(channel, toNickname)) {
-	    sendMessage(from,
-		    format(" *** nickname: %s not found ", toNickname));
+	    sendMessage(
+		    from,
+		    format(properties.getString("nicknameNotFound"), toNickname));
 	    return;
 	}
 
-	final String msg = format(" %s %s", from.getNickname(), message);
-	sendMessage(channel.findClient(toNickname), msg);
+	final String pm = properties.getString("privateMessage");
+	final String msgFrom = format(pm, toNickname, message);
+	final String msgTo = format(pm, from.getNickname(), message);
+	if (!isJoin) {
+	    sendMessage(from, msgFrom);
+	    sendMessage(channel.findClient(toNickname), msgTo);
+	} else {
+	    sendMessage(from, msgFrom);
+	}
     }
 
     /** Send a message to all clients in the channel. */
@@ -83,8 +93,10 @@ public class ProtocolUtils {
 	    final String channelname, final Client client) {
 	if (!protocol.isChannelRegistered(channelname)) {
 	    if (!protocol.validateChannelName(channelname)) {
-		sendMessage(client,
-			format(" *** channel %s not found ", channelname));
+		sendMessage(
+			client,
+			format(properties.getString("channelNotFound"),
+				channelname));
 		return;
 	    }
 	    protocol.createChannel(channelname);
@@ -98,13 +110,14 @@ public class ProtocolUtils {
     public static void invite(final Channel channel, final Client client,
 	    final String nickname, final String channelname) {
 	if (!isClientConnected(channel, nickname)) {
-	    sendMessage(client, format(" *** nickname %s not found ", nickname));
+	    sendMessage(client,
+		    format(properties.getString("nicknameNotFound"), nickname));
 	    return;
 	}
 
 	final String msg = String.format(
-		" *** %s invited you to join channel %s ",
-		client.getNickname(), channelname);
+		properties.getString("inviteToChannel"), client.getNickname(),
+		channelname);
 	sendMessage(client, msg);
     }
 
@@ -113,14 +126,14 @@ public class ProtocolUtils {
 	if (!client.isOperator() && !isClientConnected(channel, nickname)) {
 	    return;
 	}
-	final String msg = format(" *** %s has been kicked off %s by %s",
+	final String msg = format(properties.getString("kickFromChannel"),
 		nickname, channel.getChannelName(), client.getNickname());
 	closeConnection(channel, nickname);
 	sendGlobalMessage(channel, msg);
     }
 
     public static void leaveChannel(final Channel channel, final Client client) {
-	final String msg = format(" *** %s has leave channel %s",
+	final String msg = format(properties.getString("leaveChannel"),
 		client.getNickname(), channel.getChannelName());
 	closeConnection(channel, client.getNickname());
 	sendGlobalMessage(channel, msg);
@@ -130,20 +143,19 @@ public class ProtocolUtils {
     public static void changeChannelMode(final Channel channel,
 	    final Client client, final String newChannelMode) {
 	if (!client.isOperator()) {
-	    sendMessage(
-		    client,
-		    format(" cannot change channel MODE, you are not operator. "));
+	    sendMessage(client,
+		    format(properties.getString("changeChannelModeErr")));
 	    return;
 	}
-	final String msg = format(
-		" *** Mode change to '%s' on channel %s by %s ",
+	final String msg = format(properties.getString("changeChannelMode"),
 		newChannelMode, channel.getChannelName(), client.getNickname());
 	sendGlobalMessage(channel, msg);
 
     }
 
-    public static void channelMode(final Channel channel, final Client client) {
-	final String msg = String.format(" *** Mode for channel %s is '%s' ",
+    public static void retrieveChannelMode(final Channel channel,
+	    final Client client) {
+	final String msg = String.format(properties.getString("channelMode"),
 		channel.getChannelName(), channel.getChannelMode());
 	sendMessage(client, msg);
     }
@@ -151,15 +163,13 @@ public class ProtocolUtils {
     public static void changeChannelTopic(final Channel channel,
 	    final Client client, final String option, final String newTopic) {
 	if (!client.isOperator()) {
-	    sendMessage(
-		    client,
-		    format(" cannot change channel MODE, you are not operator. "));
+	    sendMessage(client,
+		    format(properties.getString("changeChannelTopicErr")));
 	    return;
 	}
 
 	channel.setChannelTopic(newTopic);
-	final String msg = format(
-		" *** %s has changed the topic on %s to '%s' ",
+	final String msg = format(properties.getString("changeChannelTopic"),
 		client.getNickname(), channel.getChannelName(), newTopic);
 	sendGlobalMessage(channel, msg);
     }
@@ -209,6 +219,10 @@ public class ProtocolUtils {
 	} else if (INVITE.toString().equals(prefix)) {
 	    option = decode[NICKNAME];
 	    msg = decodeMessage(CHANNEL_NAME, decode);
+	} else if (ME.toString().equals(prefix)) {
+	    msg = decodeMessage(MESSAGE - 1, decode);
+	} else if (NICK.toString().equals(prefix)) {
+	    option = decode[NICKNAME];
 	}
 
 	return new String[] { prefix, option, msg };
@@ -222,8 +236,8 @@ public class ProtocolUtils {
 
 	switch (prefix) {
 	case ME:
-	    final String compoundMessage = String.format(" %s -> %s %s ",
-		    nickname, nickname, message);
+	    final String compoundMessage = format(ME_MSG_FORMAT, nickname,
+		    nickname, message);
 	    sendGlobalMessage(channel, compoundMessage);
 	    break;
 	case JOIN:
@@ -231,30 +245,61 @@ public class ProtocolUtils {
 	    break;
 	case INVITE:
 	    invite(channel, client, option, message);
+	    break;
 	case KICK:
 	    kick(channel, client, option, message);
 	    break;
 	case LEAVE:
 	    leaveChannel(channel, client);
+	    break;
 	case MODE:
 	    if (!message.isEmpty()) {
 		changeChannelMode(channel, client, message);
 	    }
 
-	    channelMode(channel, client);
+	    retrieveChannelMode(channel, client);
 	    break;
 	case MSG:
-	    sendPrivateMessage(channel, client, option, message);
+	    sendPrivateMessage(channel, client, option, message, IS_NOT_JOIN);
+	    break;
 	case TOPIC:
 	    changeChannelTopic(channel, client, option, message);
 	    break;
+
+	case NICK:
+	    changeNickname(protocol, channel, client, option);
+	    break;
 	default:
-	    final String msg = format(" %s -> %s ", nickname, message);
+	    final String msg = format(GLOBAL_MSG_FORMAT, nickname, message);
 	    sendGlobalMessage(channel, msg);
 	    break;
 	}
 
 	return message;
+    }
+
+    /** Change the user nickname. */
+    public static void changeNickname(final Protocol protocol,
+	    final Channel channel, final Client client, final String newNickname) {
+	if (protocol.isNickNameEnabled(channel.getChannelName(), newNickname)) {
+	    sendMessage(
+		    client,
+		    format(properties.getString("changeNicknameErr"),
+			    newNickname));
+	    return;
+	} else if (protocol.validateNickname(newNickname)) {
+	    sendMessage(
+		    client,
+		    format(properties.getString("changeNicknameValidErr"),
+			    newNickname));
+	    return;
+	}
+	final String oldNickname = client.getNickname();
+	final String msg = format(properties.getString("changeNickname"),
+		oldNickname, newNickname);
+	// update client nickname in channel.
+	channel.findClient(oldNickname).setNickname(newNickname);
+	sendGlobalMessage(channel, msg);
     }
 
     /** Create a client instance with proper configuration. */
