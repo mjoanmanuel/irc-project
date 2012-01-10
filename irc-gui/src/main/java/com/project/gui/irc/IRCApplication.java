@@ -1,10 +1,10 @@
 package com.project.gui.irc;
 
-import static com.project.ircserver.Server.DEFAULT_IRC_PORT;
+import static com.irc.server.Server.DEFAULT_IRC_PORT;
 
 import java.io.IOException;
 
-import com.project.ircserver.Server;
+import com.irc.server.Server;
 
 /**
  * IRCApplication is responsible of.

@@ -1,16 +1,16 @@
-package com.project.ircserver.utils;
+package com.irc.server.utils;
 
-import static com.project.ircserver.Command.INVITE;
-import static com.project.ircserver.Command.JOIN;
-import static com.project.ircserver.Command.KICK;
-import static com.project.ircserver.Command.LEAVE;
-import static com.project.ircserver.Command.ME;
-import static com.project.ircserver.Command.MODE;
-import static com.project.ircserver.Command.MSG;
-import static com.project.ircserver.Command.NICK;
-import static com.project.ircserver.Command.TOPIC;
-import static com.project.ircserver.protocol.Protocol.MESSAGE;
-import static com.project.ircserver.protocol.Protocol.PREFIX;
+import static com.irc.server.Command.INVITE;
+import static com.irc.server.Command.JOIN;
+import static com.irc.server.Command.KICK;
+import static com.irc.server.Command.LEAVE;
+import static com.irc.server.Command.ME;
+import static com.irc.server.Command.MODE;
+import static com.irc.server.Command.MSG;
+import static com.irc.server.Command.NICK;
+import static com.irc.server.Command.TOPIC;
+import static com.irc.server.protocol.Protocol.MESSAGE;
+import static com.irc.server.protocol.Protocol.PREFIX;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
@@ -21,11 +21,11 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.project.ircclient.Client;
-import com.project.ircserver.Command;
-import com.project.ircserver.Server;
-import com.project.ircserver.channel.Channel;
-import com.project.ircserver.protocol.Protocol;
+import com.irc.client.Client;
+import com.irc.server.Command;
+import com.irc.server.Server;
+import com.irc.server.channel.Channel;
+import com.irc.server.protocol.Protocol;
 
 /**
  * ProtocolUtils is responsible of

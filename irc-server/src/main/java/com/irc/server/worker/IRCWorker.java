@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.project.ircserver.worker;
+package com.irc.server.worker;
 
 /**
  * @author jmendoza

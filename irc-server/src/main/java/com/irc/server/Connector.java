@@ -1,4 +1,4 @@
-package com.project.ircserver;
+package com.irc.server;
 
 import static java.lang.String.format;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.project.ircserver.channel.Channel;
+import com.irc.server.channel.Channel;
 
 /**
  * Connector is responsible of handle an external connection.

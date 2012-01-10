@@ -1,17 +1,17 @@
-package com.project.ircserver.protocol;
+package com.irc.server.protocol;
 
-import static com.project.ircserver.Command.NONCOMMAND;
-import static com.project.ircserver.Command.valueOf;
-import static com.project.ircserver.utils.ProtocolUtils.EMPTY;
-import static com.project.ircserver.utils.ProtocolUtils.extract;
-import static com.project.ircserver.utils.ProtocolUtils.isValidCommand;
-import static com.project.ircserver.utils.ProtocolUtils.proccesInput;
+import static com.irc.server.Command.NONCOMMAND;
+import static com.irc.server.Command.valueOf;
+import static com.irc.server.utils.ProtocolUtils.EMPTY;
+import static com.irc.server.utils.ProtocolUtils.extract;
+import static com.irc.server.utils.ProtocolUtils.isValidCommand;
+import static com.irc.server.utils.ProtocolUtils.proccesInput;
 
 import java.util.Map;
 
-import com.project.ircclient.Client;
-import com.project.ircserver.Command;
-import com.project.ircserver.channel.Channel;
+import com.irc.client.Client;
+import com.irc.server.Command;
+import com.irc.server.channel.Channel;
 
 /**
  * Protocol is responsible of handling messages.

@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>com.project</groupId>
-	<artifactId>irc-gui</artifactId>
+	<artifactId>gui</artifactId>
 	<version>0.0.1</version>
 	<name>irc-gui</name>
 	<packaging>jar</packaging>
@@ -23,12 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.project</groupId>
-			<artifactId>irc-server</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.project</groupId>
-			<artifactId>irc-client</artifactId>
+			<artifactId>irc</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

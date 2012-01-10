@@ -1,11 +1,11 @@
 package com.project.ircgui.panel.setting;
 
+import static com.irc.server.Connector.DEFAULT_IRC_PORT;
 import static com.project.ircgui.factory.ComponentFactory.createButton;
 import static com.project.ircgui.factory.ComponentFactory.createCheckBox;
 import static com.project.ircgui.factory.ComponentFactory.createComboBox;
 import static com.project.ircgui.factory.ComponentFactory.createLabel;
 import static com.project.ircgui.factory.ComponentFactory.createTextField;
-import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
 import static java.awt.FlowLayout.CENTER;
 import static java.lang.String.valueOf;
 

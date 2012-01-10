@@ -1,6 +1,6 @@
 package com.project.ircserver;
 
-import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
+import static com.irc.server.Connector.DEFAULT_IRC_PORT;
 import static java.lang.System.in;
 import static java.lang.System.out;
 

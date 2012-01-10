@@ -1,6 +1,6 @@
 package com.project.ircserver;
 
-import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
+import static com.irc.server.Connector.DEFAULT_IRC_PORT;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -10,7 +10,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.project.ircserver.channel.Channel;
+import com.irc.server.Connector;
+import com.irc.server.channel.Channel;
 
 /**
  * Unit test for simple Connector.

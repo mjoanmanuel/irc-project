@@ -1,4 +1,4 @@
-package com.project.ircserver;
+package com.irc.server;
 
 import static java.lang.String.format;
 import static java.lang.System.out;
@@ -10,9 +10,9 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.project.ircclient.Client;
-import com.project.ircserver.channel.Channel;
-import com.project.ircserver.protocol.Protocol;
+import com.irc.client.Client;
+import com.irc.server.channel.Channel;
+import com.irc.server.protocol.Protocol;
 
 /**
  * Worker is responsible of handling client I/O.

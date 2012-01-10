@@ -1,10 +1,10 @@
 /**
  * 
  */
-package com.project.ircserver;
+package com.irc.server;
 
-import static com.project.ircserver.utils.ProtocolUtils.createClient;
-import static com.project.ircserver.utils.ProtocolUtils.readCfgMessage;
+import static com.irc.server.utils.ProtocolUtils.createClient;
+import static com.irc.server.utils.ProtocolUtils.readCfgMessage;
 import static java.lang.String.format;
 import static java.lang.System.out;
 
@@ -14,9 +14,9 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.project.ircclient.Client;
-import com.project.ircserver.channel.Channel;
-import com.project.ircserver.protocol.Protocol;
+import com.irc.client.Client;
+import com.irc.server.channel.Channel;
+import com.irc.server.protocol.Protocol;
 
 /**
  * Server is an local IRC server.

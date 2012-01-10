@@ -16,10 +16,9 @@
 	</properties>
 
 	<modules>
-		<module>irc-server</module>
-		<module>irc-client</module>
+		<module>gui</module>
+		<module>irc</module>
 		<module>thegame</module>
-		<module>irc-gui</module>
 	</modules>
 
 	<build>
@@ -43,16 +42,6 @@
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.project</groupId>
-			<artifactId>irc-server</artifactId>
-			<version>${irc.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.project</groupId>
-			<artifactId>irc-client</artifactId>
-			<version>${irc.version}</version>
 		</dependency>
 	</dependencies>
 </project>

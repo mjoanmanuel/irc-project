@@ -1,17 +1,17 @@
-package com.project.ircserver.channel;
+package com.irc.server.channel;
 
-import static com.project.ircserver.ChannelMode.PUBLIC;
-import static com.project.ircserver.utils.ProtocolUtils.sendGlobalMessage;
-import static com.project.ircserver.utils.ProtocolUtils.sendPrivateMessage;
+import static com.irc.server.ChannelMode.PUBLIC;
+import static com.irc.server.utils.ProtocolUtils.sendGlobalMessage;
+import static com.irc.server.utils.ProtocolUtils.sendPrivateMessage;
 import static java.lang.String.format;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-import com.project.ircclient.Client;
-import com.project.ircserver.ChannelMode;
-import com.project.ircserver.utils.I18nUtils;
-import com.project.ircserver.utils.ProtocolUtils;
+import com.irc.client.Client;
+import com.irc.server.ChannelMode;
+import com.irc.server.utils.I18nUtils;
+import com.irc.server.utils.ProtocolUtils;
 
 /**
  * Channel is responsible of an IRC channel.

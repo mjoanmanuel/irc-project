@@ -1,9 +1,9 @@
 package com.project.ircgui.chat.panel;
 
+import static com.irc.server.Connector.DEFAULT_IRC_PORT;
+import static com.irc.server.utils.ProtocolUtils.SPACE;
 import static com.project.ircgui.factory.ComponentFactory.createButton;
 import static com.project.ircgui.factory.ComponentFactory.createLabel;
-import static com.project.ircserver.Connector.DEFAULT_IRC_PORT;
-import static com.project.ircserver.utils.ProtocolUtils.SPACE;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;

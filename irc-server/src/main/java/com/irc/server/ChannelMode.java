@@ -1,4 +1,4 @@
-package com.project.ircserver;
+package com.irc.server;
 
 /**
  * ChannelMode is responsible of

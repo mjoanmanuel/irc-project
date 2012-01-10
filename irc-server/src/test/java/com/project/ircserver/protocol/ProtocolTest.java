@@ -6,7 +6,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.project.ircserver.channel.Channel;
+import com.irc.server.channel.Channel;
+import com.irc.server.protocol.Protocol;
 
 /**
  * ProtocolTest is responsible of

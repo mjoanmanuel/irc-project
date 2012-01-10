@@ -1,8 +1,8 @@
-package com.project.ircclient;
+package com.irc.client;
 
 import java.net.Socket;
 
-import com.project.ircserver.Server;
+import com.irc.server.Server;
 
 /**
  * Client is responsible of a IRC client entity.
