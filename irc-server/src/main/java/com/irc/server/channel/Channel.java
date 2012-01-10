@@ -1,6 +1,6 @@
 package com.irc.server.channel;
 
-import static com.irc.server.ChannelMode.PUBLIC;
+import static com.irc.server.channel.ChannelMode.PUBLIC;
 import static com.irc.server.utils.ProtocolUtils.sendGlobalMessage;
 import static com.irc.server.utils.ProtocolUtils.sendPrivateMessage;
 import static java.lang.String.format;
@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import com.irc.client.Client;
-import com.irc.server.ChannelMode;
 import com.irc.server.utils.I18nUtils;
 import com.irc.server.utils.ProtocolUtils;
 

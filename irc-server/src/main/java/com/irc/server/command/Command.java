@@ -1,4 +1,4 @@
-package com.irc.server;
+package com.irc.server.command;
 
 /**
  * Command is responsible of channel operators avaible commands.

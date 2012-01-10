@@ -1,7 +1,7 @@
 package com.irc.server.protocol;
 
-import static com.irc.server.Command.NONCOMMAND;
-import static com.irc.server.Command.valueOf;
+import static com.irc.server.command.Command.NONCOMMAND;
+import static com.irc.server.command.Command.valueOf;
 import static com.irc.server.utils.ProtocolUtils.EMPTY;
 import static com.irc.server.utils.ProtocolUtils.extract;
 import static com.irc.server.utils.ProtocolUtils.isValidCommand;
@@ -10,8 +10,8 @@ import static com.irc.server.utils.ProtocolUtils.proccesInput;
 import java.util.Map;
 
 import com.irc.client.Client;
-import com.irc.server.Command;
 import com.irc.server.channel.Channel;
+import com.irc.server.command.Command;
 
 /**
  * Protocol is responsible of handling messages.

@@ -1,14 +1,14 @@
 package com.irc.server.utils;
 
-import static com.irc.server.Command.INVITE;
-import static com.irc.server.Command.JOIN;
-import static com.irc.server.Command.KICK;
-import static com.irc.server.Command.LEAVE;
-import static com.irc.server.Command.ME;
-import static com.irc.server.Command.MODE;
-import static com.irc.server.Command.MSG;
-import static com.irc.server.Command.NICK;
-import static com.irc.server.Command.TOPIC;
+import static com.irc.server.command.Command.INVITE;
+import static com.irc.server.command.Command.JOIN;
+import static com.irc.server.command.Command.KICK;
+import static com.irc.server.command.Command.LEAVE;
+import static com.irc.server.command.Command.ME;
+import static com.irc.server.command.Command.MODE;
+import static com.irc.server.command.Command.MSG;
+import static com.irc.server.command.Command.NICK;
+import static com.irc.server.command.Command.TOPIC;
 import static com.irc.server.protocol.Protocol.MESSAGE;
 import static com.irc.server.protocol.Protocol.PREFIX;
 import static java.lang.String.format;
@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.irc.client.Client;
-import com.irc.server.Command;
 import com.irc.server.Server;
 import com.irc.server.channel.Channel;
+import com.irc.server.command.Command;
 import com.irc.server.protocol.Protocol;
 
 /**

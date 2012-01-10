@@ -17,6 +17,7 @@ import java.util.Map;
 import com.irc.client.Client;
 import com.irc.server.channel.Channel;
 import com.irc.server.protocol.Protocol;
+import com.irc.server.worker.Worker;
 
 /**
  * Server is an local IRC server.

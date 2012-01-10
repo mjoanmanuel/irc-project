@@ -1,4 +1,4 @@
-package com.irc.server;
+package com.irc.server.worker;
 
 import static java.lang.String.format;
 import static java.lang.System.out;
