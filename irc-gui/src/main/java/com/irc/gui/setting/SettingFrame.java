@@ -1,8 +1,8 @@
-package com.project.ircgui.setting;
+package com.irc.gui.setting;
 
-import static com.project.ircgui.factory.ComponentFactory.createMenu;
-import static com.project.ircgui.factory.ComponentFactory.createMenuBar;
-import static com.project.ircgui.factory.ComponentFactory.createMenuItem;
+import static com.irc.gui.factory.ComponentFactory.createMenu;
+import static com.irc.gui.factory.ComponentFactory.createMenuBar;
+import static com.irc.gui.factory.ComponentFactory.createMenuItem;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,10 +12,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import com.project.ircgui.common.CommonFrame;
-import com.project.ircgui.panel.miscellaneous.MiscellaneousPanel;
-import com.project.ircgui.panel.setting.SettingPanel;
-import com.project.ircgui.utils.I18nUtils;
+import com.irc.gui.common.CommonFrame;
+import com.irc.gui.panel.miscellaneous.MiscellaneousPanel;
+import com.irc.gui.panel.setting.SettingPanel;
+import com.irc.gui.utils.I18nUtils;
 
 /**
  * IRCFrame is responsible of

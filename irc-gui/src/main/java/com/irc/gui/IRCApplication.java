@@ -1,4 +1,4 @@
-package com.project.gui.irc;
+package com.irc.gui;
 
 import static com.irc.server.Server.DEFAULT_IRC_PORT;
 

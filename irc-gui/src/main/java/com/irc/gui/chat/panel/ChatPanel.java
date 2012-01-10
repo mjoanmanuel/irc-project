@@ -1,9 +1,9 @@
-package com.project.ircgui.chat.panel;
+package com.irc.gui.chat.panel;
 
+import static com.irc.gui.factory.ComponentFactory.createButton;
+import static com.irc.gui.factory.ComponentFactory.createLabel;
 import static com.irc.server.Connector.DEFAULT_IRC_PORT;
 import static com.irc.server.utils.ProtocolUtils.SPACE;
-import static com.project.ircgui.factory.ComponentFactory.createButton;
-import static com.project.ircgui.factory.ComponentFactory.createLabel;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;
@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.project.ircgui.utils.I18nUtils;
+import com.irc.gui.utils.I18nUtils;
 
 /**
  * ChatPanel is responsible of

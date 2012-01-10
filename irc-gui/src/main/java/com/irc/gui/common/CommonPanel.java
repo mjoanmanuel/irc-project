@@ -1,4 +1,4 @@
-package com.project.ircgui.common;
+package com.irc.gui.common;
 
 import java.awt.event.ActionEvent;
 

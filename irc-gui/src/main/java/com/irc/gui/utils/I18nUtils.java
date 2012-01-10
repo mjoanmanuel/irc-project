@@ -1,4 +1,4 @@
-package com.project.ircgui.utils;
+package com.irc.gui.utils;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

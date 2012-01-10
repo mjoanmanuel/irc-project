@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.project.ircgui.common;
+package com.irc.gui.common;
 
 import javax.swing.JFrame;
 

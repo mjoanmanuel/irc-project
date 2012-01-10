@@ -1,4 +1,4 @@
-package com.project.ircgui.factory;
+package com.irc.gui.factory;
 
 import java.awt.event.ActionListener;
 

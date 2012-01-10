@@ -1,10 +1,10 @@
 /**
  * 
  */
-package com.project.ircgui.chat;
+package com.irc.gui.chat;
 
-import static com.project.ircgui.factory.ComponentFactory.createMenu;
-import static com.project.ircgui.factory.ComponentFactory.createMenuItem;
+import static com.irc.gui.factory.ComponentFactory.createMenu;
+import static com.irc.gui.factory.ComponentFactory.createMenuItem;
 import static java.awt.BorderLayout.CENTER;
 
 import java.awt.BorderLayout;
@@ -17,9 +17,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 
-import com.project.ircgui.chat.panel.ChatPanel;
-import com.project.ircgui.factory.ComponentFactory;
-import com.project.ircgui.utils.I18nUtils;
+import com.irc.gui.chat.panel.ChatPanel;
+import com.irc.gui.factory.ComponentFactory;
+import com.irc.gui.utils.I18nUtils;
 
 /**
  * @author jmendoza Dec 1, 2011

@@ -1,6 +1,6 @@
 package com.project.ircgui;
 
-import com.project.ircgui.chat.ChatFrame;
+import com.irc.gui.chat.ChatFrame;
 
 /**
  * @author jmendoza Dec 1, 2011

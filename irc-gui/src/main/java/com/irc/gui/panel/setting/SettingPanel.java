@@ -1,11 +1,11 @@
-package com.project.ircgui.panel.setting;
+package com.irc.gui.panel.setting;
 
+import static com.irc.gui.factory.ComponentFactory.createButton;
+import static com.irc.gui.factory.ComponentFactory.createCheckBox;
+import static com.irc.gui.factory.ComponentFactory.createComboBox;
+import static com.irc.gui.factory.ComponentFactory.createLabel;
+import static com.irc.gui.factory.ComponentFactory.createTextField;
 import static com.irc.server.Connector.DEFAULT_IRC_PORT;
-import static com.project.ircgui.factory.ComponentFactory.createButton;
-import static com.project.ircgui.factory.ComponentFactory.createCheckBox;
-import static com.project.ircgui.factory.ComponentFactory.createComboBox;
-import static com.project.ircgui.factory.ComponentFactory.createLabel;
-import static com.project.ircgui.factory.ComponentFactory.createTextField;
 import static java.awt.FlowLayout.CENTER;
 import static java.lang.String.valueOf;
 
@@ -19,8 +19,8 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
-import com.project.ircgui.common.CommonPanel;
-import com.project.ircgui.utils.I18nUtils;
+import com.irc.gui.common.CommonPanel;
+import com.irc.gui.utils.I18nUtils;
 
 /**
  * ServerPanel is responsible of

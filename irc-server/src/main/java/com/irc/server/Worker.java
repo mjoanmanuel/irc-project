@@ -21,7 +21,11 @@ import com.irc.server.protocol.Protocol;
  */
 public class Worker extends Thread {
 
+    private static final String GET_LIST_COMMAND = "[get]";
+    private static final String LOG_MSG = " channel: %s, nickname: %s, message: %s";
+    private static final String END_COMMAND = "[end]";
     private static final boolean AUTO_FLUSH = true;
+
     private Client client;
     private Channel channel;
     private Protocol protocol;
@@ -45,18 +49,16 @@ public class Worker extends Thread {
 	    receiver = new BufferedReader(new InputStreamReader(client
 		    .getSocket().getInputStream()));
 	    String receiveMessageString = "";
+
 	    while ((receiveMessageString = receiver.readLine()) != null) {
-		if (receiveMessageString.equals("[get]")) {
-		    // send online users.
-		    sendList(sender);
+		if (receiveMessageString.equals(GET_LIST_COMMAND)) {
+		    sendList(sender); // send online users.
 		} else {
 		    final String response = protocol.handleInput(channel,
 			    client, receiveMessageString);
 		    // LOGGING INTO SERVER OUTPUT.
-		    out.println(format(
-			    " channel: %s, nickname: %s, message: %s",
-			    channel.getChannelName(), client.getNickname(),
-			    response));
+		    out.println(format(LOG_MSG, channel.getChannelName(),
+			    client.getNickname(), response));
 
 		    sender.write(response);
 		}
@@ -74,12 +76,11 @@ public class Worker extends Thread {
     private void sendList(final PrintWriter sendMessage) {
 	final Iterator<Entry<String, Client>> iterator = channel.getClients()
 		.entrySet().iterator();
-	// sendMessage.println("[onlinelist]");
 	while (iterator.hasNext()) {
 	    final Entry<String, Client> current = iterator.next();
 	    sendMessage.println(current.getKey());
 	}
-	sendMessage.println("[end]");
+	sendMessage.println(END_COMMAND);
     }
 
     private void closeOutputResource(final PrintWriter sendMessage) {

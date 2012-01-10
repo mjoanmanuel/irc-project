@@ -1,4 +1,4 @@
-package com.project.ircgui.panel.miscellaneous;
+package com.irc.gui.panel.miscellaneous;
 
 import javax.swing.JPanel;
 
